@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:web_socket_channel/web_socket_channel.dart';
+
 import 'package:mattermost_flutter/src/config/config.dart';
 import 'package:mattermost_flutter/src/mattermost_client.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// WebSocket client for Mattermost
 class MattermostWebSocketClient {
@@ -21,10 +22,7 @@ class MattermostWebSocketClient {
   /// Whether the WebSocket is connected
   bool get isConnected => _connected;
 
-  MattermostWebSocketClient({
-    required this.config,
-    required this.client,
-  });
+  MattermostWebSocketClient({required this.config, required this.client});
 
   /// Connect to the WebSocket
   Future<void> connect() async {
@@ -33,9 +31,9 @@ class MattermostWebSocketClient {
     try {
       final serverUrl = config.baseUrl.replaceFirst('http', 'ws');
       final wsUrl = '$serverUrl/api/v4/websocket';
-      
+
       _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
-      
+
       _subscription = _channel!.stream.listen(
         (dynamic message) {
           final data = jsonDecode(message as String) as Map<String, dynamic>;
@@ -57,12 +55,13 @@ class MattermostWebSocketClient {
         },
       );
 
+      await _channel!.ready;
+      _connected = true;
       // Authenticate after connection
       if (config.token != null && config.token!.isNotEmpty) {
         _authenticate();
       }
 
-      _connected = true;
       _startPingTimer();
 
       _eventController.add({
@@ -104,11 +103,7 @@ class MattermostWebSocketClient {
 
     if (message.containsKey('seq_reply')) {
       // Handle response to a previous request
-      _eventController.add({
-        'event': 'response',
-        'seq': message['seq_reply'],
-        'data': message,
-      });
+      _eventController.add({'event': 'response', 'seq': message['seq_reply'], 'data': message});
     }
   }
 
@@ -116,9 +111,7 @@ class MattermostWebSocketClient {
   void _authenticate() {
     send({
       'action': 'authentication_challenge',
-      'data': {
-        'token': config.token,
-      },
+      'data': {'token': config.token},
     });
   }
 
@@ -126,10 +119,7 @@ class MattermostWebSocketClient {
   void _startPingTimer() {
     _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (_connected) {
-        send({
-          'action': 'ping',
-          'data': {},
-        });
+        send({'action': 'ping', 'data': {}});
       }
     });
   }

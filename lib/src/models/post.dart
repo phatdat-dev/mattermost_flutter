@@ -14,7 +14,7 @@ class Post {
   final String? originalId;
   final Map<String, dynamic>? props;
   final Map<String, dynamic>? metadata;
-  final Map<String, dynamic>? fileIds;
+  final List<String>? fileIds;
 
   Post({
     required this.id,
@@ -50,7 +50,7 @@ class Post {
       originalId: json['original_id'],
       props: json['props'],
       metadata: json['metadata'],
-      fileIds: json['file_ids'],
+      fileIds: (json['file_ids'] as List?)?.map((e) => e.toString()).toList(),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'package:mattermost_flutter/src/models/time_zone.dart';
+
 /// User model
 class User {
   final String id;
@@ -13,7 +15,7 @@ class User {
   final int? lastPictureUpdate;
   final int? failedAttempts;
   final String? locale;
-  final String? timezone;
+  final TimeZone? timezone;
   final int? createAt;
   final int? updateAt;
   final int? deleteAt;
@@ -59,7 +61,7 @@ class User {
       lastPictureUpdate: json['last_picture_update'],
       failedAttempts: json['failed_attempts'],
       locale: json['locale'],
-      timezone: json['timezone'],
+      timezone: json['timezone'] != null ? TimeZone.fromJson(json['timezone']) : null,
       createAt: json['create_at'],
       updateAt: json['update_at'],
       deleteAt: json['delete_at'],
@@ -84,7 +86,7 @@ class User {
       if (lastPictureUpdate != null) 'last_picture_update': lastPictureUpdate,
       if (failedAttempts != null) 'failed_attempts': failedAttempts,
       if (locale != null) 'locale': locale,
-      if (timezone != null) 'timezone': timezone,
+      if (timezone != null) 'timezone': timezone?.toJson(),
       if (createAt != null) 'create_at': createAt,
       if (updateAt != null) 'update_at': updateAt,
       if (deleteAt != null) 'delete_at': deleteAt,
@@ -107,7 +109,7 @@ class CreateUserRequest {
   final Map<String, dynamic>? props;
   final Map<String, dynamic>? notifyProps;
   final String? locale;
-  final String? timezone;
+  final TimeZone? timezone;
 
   CreateUserRequest({
     required this.email,
@@ -135,7 +137,7 @@ class CreateUserRequest {
       if (props != null) 'props': props,
       if (notifyProps != null) 'notify_props': notifyProps,
       if (locale != null) 'locale': locale,
-      if (timezone != null) 'timezone': timezone,
+      if (timezone != null) 'timezone': timezone?.toJson(),
     };
   }
 }
@@ -151,7 +153,7 @@ class UpdateUserRequest {
   final Map<String, dynamic>? props;
   final Map<String, dynamic>? notifyProps;
   final String? locale;
-  final String? timezone;
+  final TimeZone? timezone;
 
   UpdateUserRequest({
     this.email,
@@ -177,7 +179,7 @@ class UpdateUserRequest {
       if (props != null) 'props': props,
       if (notifyProps != null) 'notify_props': notifyProps,
       if (locale != null) 'locale': locale,
-      if (timezone != null) 'timezone': timezone,
+      if (timezone != null) 'timezone': timezone?.toJson(),
     };
   }
 }

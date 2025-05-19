@@ -30,3 +30,26 @@ class Reaction {
     };
   }
 }
+
+
+
+/// Reaction request model
+class ReactionRequest {
+  final String userId;
+  final String postId;
+  final String emojiName;
+
+  ReactionRequest({
+    required this.userId,
+    required this.postId,
+    required this.emojiName,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+      'post_id': postId,
+      'emoji_name': emojiName,
+    };
+  }
+}
