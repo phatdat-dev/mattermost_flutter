@@ -1,18 +1,18 @@
 name: mattermost_flutter
-description: "A new Flutter package project."
+description: "Mattermost Flutter SDK for Dart"
 version: 0.0.1
-homepage:
+homepage: https://github.com/phatdat-dev/mattermost_flutter
 
 environment:
   sdk: "3.7.2"
-  flutter: "3.29.3"
+  flutter: ">=3.29.3"
 
 dependencies:
   flutter:
     sdk: flutter
-  dio: any
-  web_socket_channel: any
-  http_parser: any
+  dio: ^5.8.0+1
+  web_socket_channel: ^3.0.3
+  http_parser: ^4.1.2
 
 dev_dependencies:
   flutter_test:
