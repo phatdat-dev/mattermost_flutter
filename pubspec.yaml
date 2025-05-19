@@ -1,6 +1,6 @@
 name: mattermost_flutter
 description: "Mattermost Flutter SDK for Dart"
-version: 0.0.1
+version: 1.0.0
 homepage: https://github.com/phatdat-dev/mattermost_flutter
 
 environment:

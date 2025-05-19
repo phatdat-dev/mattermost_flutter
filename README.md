@@ -1,9 +1,15 @@
 # Mattermost Flutter
 
+# [![Mattermost logo](https://user-images.githubusercontent.com/7205829/137170381-fe86eef0-bccc-4fdd-8e92-b258884ebdd7.png)](https://mattermost.com)
+
 [![Pub Version](https://img.shields.io/pub/v/mattermost_flutter)](https://pub.dev/packages/mattermost_flutter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive Flutter package for interacting with the Mattermost API. This package provides a complete set of Dart classes and methods to access all Mattermost server endpoints, making it easy to build Flutter applications that integrate with Mattermost.
+A comprehensive Flutter package that provides complete access to the Mattermost API. This package enables Flutter developers to easily integrate Mattermost functionality into their applications with a clean, type-safe Dart interface.
+
+The package covers all Mattermost API endpoints including authentication, users, teams, channels, posts, files, webhooks, and real-time WebSocket communication. It features robust error handling, comprehensive documentation, and practical examples to help you get started quickly.
+
+Built with Flutter best practices and designed for performance, this package is ideal for building custom Mattermost clients, chat integrations, notification systems, or any application that needs to interact with a Mattermost server.
 
 ## Features
 
@@ -591,6 +597,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Contributors
+
+- [phatdat-dev](https://github.com/phatdat-dev)
 
 ## License
 
