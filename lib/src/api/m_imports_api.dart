@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:mattermost_flutter/src/models/m_import.dart';
 
 /// API for imports-related endpoints
@@ -27,7 +26,7 @@ class MImportsApi {
         'import': await MultipartFile.fromFile(
           file.path,
           filename: file.path.split('/').last,
-          contentType: MediaType.parse('application/octet-stream'),
+          contentType: DioMediaType.parse('application/octet-stream'),
         ),
       });
 

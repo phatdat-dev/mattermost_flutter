@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:mattermost_flutter/src/models/m_saml.dart';
 
 /// API for SAML-related endpoints
@@ -27,7 +26,7 @@ class MSamlApi {
         'certificate': await MultipartFile.fromFile(
           certificate.path,
           filename: certificate.path.split('/').last,
-          contentType: MediaType.parse('application/x-pem-file'),
+          contentType: DioMediaType.parse('application/x-pem-file'),
         ),
       });
 
@@ -44,7 +43,7 @@ class MSamlApi {
         'certificate': await MultipartFile.fromFile(
           certificate.path,
           filename: certificate.path.split('/').last,
-          contentType: MediaType.parse('application/x-pem-file'),
+          contentType: DioMediaType.parse('application/x-pem-file'),
         ),
       });
 
@@ -61,7 +60,7 @@ class MSamlApi {
         'private_key': await MultipartFile.fromFile(
           key.path,
           filename: key.path.split('/').last,
-          contentType: MediaType.parse('application/x-pem-file'),
+          contentType: DioMediaType.parse('application/x-pem-file'),
         ),
       });
 

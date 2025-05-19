@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:mattermost_flutter/src/models/models.dart';
 
 /// API for emoji-related endpoints
@@ -24,7 +23,7 @@ class MEmojisApi {
   Future<MEmoji> createCustomEmoji({required String name, required File image}) async {
     try {
       final formData = FormData.fromMap({
-        'emoji': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last, contentType: MediaType.parse('image/png')),
+        'emoji': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last, contentType: DioMediaType.parse('image/png')),
       });
 
       final response = await _dio.post(

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:mattermost_flutter/src/models/models.dart';
 
 /// API for file-related endpoints
@@ -18,7 +17,7 @@ class MFilesApi {
 
       final formData = FormData.fromMap({
         'channel_id': channelId,
-        'files': await MultipartFile.fromFile(file.path, filename: name, contentType: MediaType.parse(mimeType)),
+        'files': await MultipartFile.fromFile(file.path, filename: name, contentType: DioMediaType.parse(mimeType)),
         if (clientId != null) 'client_ids': clientId,
       });
 

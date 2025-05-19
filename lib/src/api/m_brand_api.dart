@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 
 /// API for brand-related endpoints
 class MBrandApi {
@@ -23,7 +22,7 @@ class MBrandApi {
   Future<void> uploadBrandImage(File image) async {
     try {
       final formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last, contentType: MediaType.parse('image/png')),
+        'image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last, contentType: DioMediaType.parse('image/png')),
       });
 
       await _dio.post('/api/v4/brand/image', data: formData);
