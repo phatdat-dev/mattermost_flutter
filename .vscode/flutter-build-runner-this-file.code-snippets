@@ -1,0 +1,10 @@
+{
+  "Flutter-build-runner-this-file": {
+    "scope": "dart",
+    "prefix": "@flutter-build-runner-this-file",
+    "body": [
+      "flutter pub run build_runner build --delete-conflicting-outputs --build-filter=\"${RELATIVE_FILEPATH/\\/\\w+\\.dart/\\/*.dart/}\""
+    ],
+    "description": "Flutter-build-runner-this-file"
+  }
+}

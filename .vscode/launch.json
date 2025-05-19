@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "name": "Web Flutter development",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        // "--flavor=development",
+        // flutter run -d chrome --web-browser-flag "--disable-web-security"
+        "--web-browser-flag=--disable-web-security"
+      ]
+    }
+  ]
+}

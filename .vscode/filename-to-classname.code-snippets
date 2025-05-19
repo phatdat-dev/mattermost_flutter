@@ -1,0 +1,7 @@
+{
+  "FileName-To-ClassName": {
+    "prefix": "@filename-to-classname",
+    "body": ["${TM_FILENAME_BASE/(?:^|-|_|\\.)(\\w)/${1:/upcase}/g}"],
+    "description": "FileName-To-ClassName"
+  }
+}
