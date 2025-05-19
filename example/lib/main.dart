@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class DashboardScreen extends StatefulWidget {
   final MattermostClient client;
-  final User currentUser;
+  final MUser currentUser;
 
   const DashboardScreen({super.key, required this.client, required this.currentUser});
 
@@ -182,8 +182,8 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
-  List<Team> _teams = [];
-  Team? _selectedTeam;
+  List<MTeam> _teams = [];
+  MTeam? _selectedTeam;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -346,8 +346,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 class ChannelsScreen extends StatefulWidget {
   final MattermostClient client;
-  final User currentUser;
-  final Team team;
+  final MUser currentUser;
+  final MTeam team;
 
   const ChannelsScreen({super.key, required this.client, required this.currentUser, required this.team});
 
@@ -356,7 +356,7 @@ class ChannelsScreen extends StatefulWidget {
 }
 
 class _ChannelsScreenState extends State<ChannelsScreen> {
-  List<Channel> _channels = [];
+  List<MChannel> _channels = [];
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -402,7 +402,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
     if (result != null) {
       try {
         await widget.client.channels.createChannel(
-          CreateChannelRequest(
+          MCreateChannelRequest(
             teamId: widget.team.id,
             name: result['name']!.toLowerCase().replaceAll(' ', '-'),
             displayName: result['displayName']!,
@@ -556,8 +556,8 @@ class _CreateChannelDialogState extends State<CreateChannelDialog> {
 
 class ChannelScreen extends StatefulWidget {
   final MattermostClient client;
-  final User currentUser;
-  final Channel channel;
+  final MUser currentUser;
+  final MChannel channel;
 
   const ChannelScreen({super.key, required this.client, required this.currentUser, required this.channel});
 
@@ -568,7 +568,7 @@ class ChannelScreen extends StatefulWidget {
 class _ChannelScreenState extends State<ChannelScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  List<Post> _posts = [];
+  List<MPost> _posts = [];
   bool _isLoading = true;
   String? _errorMessage;
   StreamSubscription? _websocketSubscription;
@@ -630,7 +630,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
     _messageController.clear();
 
     try {
-      await widget.client.posts.createPost(CreatePostRequest(channelId: widget.channel.id, message: message));
+      await widget.client.posts.createPost(MCreatePostRequest(channelId: widget.channel.id, message: message));
 
       // Reload posts after sending a message
       _loadPosts();
@@ -639,9 +639,9 @@ class _ChannelScreenState extends State<ChannelScreen> {
     }
   }
 
-  Future<void> _addReaction(Post post, String emoji) async {
+  Future<void> _addReaction(MPost post, String emoji) async {
     try {
-      await widget.client.posts.addReaction(ReactionRequest(userId: widget.currentUser.id, postId: post.id, emojiName: emoji));
+      await widget.client.posts.addReaction(MReactionRequest(userId: widget.currentUser.id, postId: post.id, emojiName: emoji));
 
       // Reload posts after adding a reaction
       _loadPosts();
@@ -761,7 +761,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
 }
 
 class MessageTile extends StatelessWidget {
-  final Post post;
+  final MPost post;
   final String currentUserId;
   final VoidCallback onReactionTap;
 
@@ -886,7 +886,7 @@ class DirectMessagesScreen extends StatelessWidget {
 
 class ProfileScreen extends StatelessWidget {
   final MattermostClient client;
-  final User currentUser;
+  final MUser currentUser;
 
   const ProfileScreen({super.key, required this.client, required this.currentUser});
 

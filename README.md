@@ -41,7 +41,7 @@ flutter pub get
 
 ### Initialize the Client
 
-```plaintext
+```dart
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 // Initialize the client
@@ -55,7 +55,7 @@ final client = MattermostClient(
 
 ### Authentication
 
-```plaintext
+```dart
 // Login with username/email and password
 try {
   await client.login(
@@ -73,7 +73,7 @@ await client.logout();
 
 ### Working with Users
 
-```plaintext
+```dart
 // Get current user
 final currentUser = await client.users.getMe();
 print('Logged in as: ${currentUser.username}');
@@ -84,7 +84,7 @@ final user = await client.users.getUser('user_id');
 // Update user
 await client.users.updateUser(
   'user_id',
-  UpdateUserRequest(
+  MUpdateUserRequest(
     firstName: 'New First Name',
     lastName: 'New Last Name',
   ),
@@ -93,13 +93,13 @@ await client.users.updateUser(
 
 ### Working with Teams
 
-```plaintext
+```dart
 // Get teams for user
 final teams = await client.teams.getTeamsForUser('user_id');
 
 // Create a team
 final newTeam = await client.teams.createTeam(
-  CreateTeamRequest(
+  MCreateTeamRequest(
     name: 'team-name',
     displayName: 'Team Display Name',
     type: 'O', // Open team
@@ -109,13 +109,13 @@ final newTeam = await client.teams.createTeam(
 
 ### Working with Channels
 
-```plaintext
+```dart
 // Get channels for team
 final channels = await client.channels.getChannelsForTeam('team_id');
 
 // Create a channel
 final newChannel = await client.channels.createChannel(
-  CreateChannelRequest(
+  MCreateChannelRequest(
     teamId: 'team_id',
     name: 'channel-name',
     displayName: 'Channel Display Name',
@@ -131,10 +131,10 @@ await client.channels.addChannelMember('channel_id', 'user_id');
 
 ### Working with Posts
 
-```plaintext
+```dart
 // Create a post
 final post = await client.posts.createPost(
-  CreatePostRequest(
+  MCreatePostRequest(
     channelId: 'channel_id',
     message: 'Hello, Mattermost!',
   ),
@@ -148,7 +148,7 @@ final posts = await client.posts.getPostsForChannel(
 
 // Add a reaction to a post
 await client.posts.addReaction(
-  ReactionRequest(
+  MReactionRequest(
     userId: 'user_id',
     postId: 'post_id',
     emojiName: '+1',
@@ -158,7 +158,7 @@ await client.posts.addReaction(
 
 ### Using WebSockets for Real-time Updates
 
-```plaintext
+```dart
 // Connect to WebSocket
 client.webSocket.connect();
 
@@ -178,43 +178,43 @@ client.webSocket.disconnect();
 
 The package provides access to all Mattermost API endpoints through the following classes:
 
-- `UsersApi`: User management
-- `TeamsApi`: Team management
-- `ChannelsApi`: Channel operations
-- `PostsApi`: Post (message) operations
-- `FilesApi`: File upload and management
-- `SystemApi`: System configuration
-- `WebhooksApi`: Webhook management
-- `PreferencesApi`: User preferences
-- `StatusApi`: User status
-- `EmojisApi`: Custom emoji management
-- `ComplianceApi`: Compliance reports
-- `ClustersApi`: Cluster management
-- `LDAPApi`: LDAP integration
-- `OAuthApi`: OAuth app management
-- `ElasticsearchApi`: Elasticsearch configuration
-- `PluginsApi`: Plugin management
-- `RolesApi`: Role management
-- `SchemesApi`: Scheme management
-- `IntegrationsApi`: Integration management
-- `BrandApi`: Brand image management
-- `CommandsApi`: Slash command management
-- `GroupsApi`: Group management
-- `BotsApi`: Bot account management
-- `JobsApi`: Background job management
-- `DataRetentionApi`: Data retention policies
-- `ExportsApi`: Data export
-- `ImportsApi`: Data import
-- `SAMLApi`: SAML configuration
-- `PermissionsApi`: Permission management
-- `SharedChannelsApi`: Shared channel management
-- `CloudApi`: Cloud service management
+- `MUsersApi`: User management
+- `MTeamsApi`: Team management
+- `MChannelsApi`: Channel operations
+- `MPostsApi`: Post (message) operations
+- `MFilesApi`: File upload and management
+- `MSystemApi`: System configuration
+- `MWebhooksApi`: Webhook management
+- `MPreferencesApi`: User preferences
+- `MStatusApi`: User status
+- `MEmojisApi`: Custom emoji management
+- `MComplianceApi`: Compliance reports
+- `MClustersApi`: Cluster management
+- `MLDAPApi`: LDAP integration
+- `MOAuthApi`: OAuth app management
+- `MElasticsearchApi`: Elasticsearch configuration
+- `MPluginsApi`: Plugin management
+- `MRolesApi`: Role management
+- `MSchemesApi`: Scheme management
+- `MIntegrationsApi`: Integration management
+- `MBrandApi`: Brand image management
+- `MCommandsApi`: Slash command management
+- `MGroupsApi`: Group management
+- `MBotsApi`: Bot account management
+- `MJobsApi`: Background job management
+- `MDataRetentionApi`: Data retention policies
+- `MExportsApi`: Data export
+- `MImportsApi`: Data import
+- `MSAMLApi`: SAML configuration
+- `MPermissionsApi`: Permission management
+- `MSharedChannelsApi`: Shared channel management
+- `MCloudApi`: Cloud service management
 
 ## Configuration Options
 
 The `MattermostConfig` class provides several configuration options:
 
-```plaintext
+```dart
 final config = MattermostConfig(
   baseUrl: 'https://your-mattermost-server.com',
   enableDebugLogs: true,
@@ -228,350 +228,14 @@ final config = MattermostConfig(
 
 Here's a more complete example showing how to build a simple Mattermost client:
 
-```plaintext
-import 'package:flutter/material.dart';
-import 'package:mattermost_flutter/mattermost_flutter.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mattermost Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginScreen(),
-    );
-  }
-}
-
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _serverController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Mattermost Login')),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _serverController,
-              decoration: InputDecoration(labelText: 'Server URL'),
-            ),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username or Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
-                  ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _login() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final client = MattermostClient(
-        config: MattermostConfig(
-          baseUrl: _serverController.text,
-          enableDebugLogs: true,
-        ),
-      );
-
-      await client.login(
-        loginId: _usernameController.text,
-        password: _passwordController.text,
-      );
-
-      final currentUser = await client.users.getMe();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChannelListScreen(
-            client: client,
-            currentUser: currentUser,
-          ),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-}
-
-class ChannelListScreen extends StatefulWidget {
-  final MattermostClient client;
-  final User currentUser;
-
-  ChannelListScreen({required this.client, required this.currentUser});
-
-  @override
-  _ChannelListScreenState createState() => _ChannelListScreenState();
-}
-
-class _ChannelListScreenState extends State<ChannelListScreen> {
-  List<Team> _teams = [];
-  List<Channel> _channels = [];
-  Team? _selectedTeam;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTeams();
-  }
-
-  Future<void> _loadTeams() async {
-    try {
-      final teams = await widget.client.teams.getTeamsForUser(widget.currentUser.id);
-      setState(() {
-        _teams = teams;
-        if (teams.isNotEmpty) {
-          _selectedTeam = teams.first;
-          _loadChannels(_selectedTeam!.id);
-        } else {
-          _isLoading = false;
-        }
-      });
-    } catch (e) {
-      print('Error loading teams: $e');
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _loadChannels(String teamId) async {
-    setState(() => _isLoading = true);
-    try {
-      final channels = await widget.client.channels.getChannelsForUser(
-        widget.currentUser.id,
-        teamId,
-      );
-      setState(() {
-        _channels = channels;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error loading channels: $e');
-      setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_selectedTeam?.displayName ?? 'Channels'),
-        actions: [
-          PopupMenuButton<Team>(
-            onSelected: (team) {
-              setState(() => _selectedTeam = team);
-              _loadChannels(team.id);
-            },
-            itemBuilder: (context) => _teams
-                .map((team) => PopupMenuItem<Team>(
-                      value: team,
-                      child: Text(team.displayName),
-                    ))
-                .toList(),
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _channels.length,
-              itemBuilder: (context, index) {
-                final channel = _channels[index];
-                return ListTile(
-                  leading: Icon(
-                    channel.type == 'O' ? Icons.tag : Icons.lock,
-                  ),
-                  title: Text(channel.displayName),
-                  subtitle: Text(channel.purpose),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChannelScreen(
-                          client: widget.client,
-                          currentUser: widget.currentUser,
-                          channel: channel,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-    );
-  }
-}
-
-class ChannelScreen extends StatefulWidget {
-  final MattermostClient client;
-  final User currentUser;
-  final Channel channel;
-
-  ChannelScreen({
-    required this.client,
-    required this.currentUser,
-    required this.channel,
-  });
-
-  @override
-  _ChannelScreenState createState() => _ChannelScreenState();
-}
-
-class _ChannelScreenState extends State<ChannelScreen> {
-  final _messageController = TextEditingController();
-  List<Post> _posts = [];
-  bool _isLoading = true;
-  StreamSubscription? _subscription;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPosts();
-    _setupWebSocket();
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _subscription?.cancel();
-    super.dispose();
-  }
-
-  void _setupWebSocket() {
-    _subscription = widget.client.webSocket.events.listen((event) {
-      if (event['event'] == 'posted' &&
-          event['data']['channel_id'] == widget.channel.id) {
-        _loadPosts();
-      }
-    });
-  }
-
-  Future<void> _loadPosts() async {
-    setState(() => _isLoading = true);
-    try {
-      final postList = await widget.client.posts.getPostsForChannel(
-        widget.channel.id,
-        perPage: 50,
-      );
-
-      setState(() {
-        _posts = postList.posts.values.toList()
-          ..sort((a, b) => (b.createAt ?? 0).compareTo(a.createAt ?? 0));
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error loading posts: $e');
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final message = _messageController.text.trim();
-    if (message.isEmpty) return;
-
-    _messageController.clear();
-    try {
-      await widget.client.posts.createPost(
-        CreatePostRequest(
-          channelId: widget.channel.id,
-          message: message,
-        ),
-      );
-      _loadPosts();
-    } catch (e) {
-      print('Error sending message: $e');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.channel.displayName)),
-      body: Column(
-        children: [
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    reverse: true,
-                    itemCount: _posts.length,
-                    itemBuilder: (context, index) {
-                      final post = _posts[index];
-                      return ListTile(
-                        title: Text(post.message),
-                        subtitle: Text('User ID: ${post.userId}'),
-                      );
-                    },
-                  ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-```
+check the `example` directory for a full Flutter app that demonstrates the usage of this package.
+Click [here](https://github.com/phatdat-dev/mattermost_flutter/tree/master/example) to explore the example app.
 
 ## Error Handling
 
 The package provides detailed error information when API calls fail:
 
-```plaintext
+```dart
 try {
   await client.login(
     loginId: 'username_or_email',
