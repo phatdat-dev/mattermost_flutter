@@ -76,12 +76,19 @@ class MFileUploadResponse {
 
   factory MFileUploadResponse.fromJson(Map<String, dynamic> json) {
     return MFileUploadResponse(
-      fileInfos: (json['file_infos'] as List<dynamic>? ?? []).map((fileInfo) => MFileInfo.fromJson(fileInfo)).toList(),
-      clientIds: (json['client_ids'] as Map<String, dynamic>? ?? {}).map((key, value) => MapEntry(key, value.toString())),
+      fileInfos: (json['file_infos'] as List<dynamic>? ?? [])
+          .map((fileInfo) => MFileInfo.fromJson(fileInfo))
+          .toList(),
+      clientIds: (json['client_ids'] as Map<String, dynamic>? ?? {}).map(
+        (key, value) => MapEntry(key, value.toString()),
+      ),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'file_infos': fileInfos.map((fileInfo) => fileInfo.toJson()).toList(), 'client_ids': clientIds};
+    return {
+      'file_infos': fileInfos.map((fileInfo) => fileInfo.toJson()).toList(),
+      'client_ids': clientIds,
+    };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for integrations-related endpoints
 class MIntegrationsApi {

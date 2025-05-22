@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/m_cloud.dart';
+
+import '../models/m_cloud.dart';
 
 /// API for cloud-related endpoints
 class MCloudApi {
@@ -38,9 +39,14 @@ class MCloudApi {
   }
 
   /// Update cloud customer
-  Future<MCloudCustomer> updateCustomer(MUpdateCloudCustomerRequest request) async {
+  Future<MCloudCustomer> updateCustomer(
+    MUpdateCloudCustomerRequest request,
+  ) async {
     try {
-      final response = await _dio.put('/api/v4/cloud/customer', data: request.toJson());
+      final response = await _dio.put(
+        '/api/v4/cloud/customer',
+        data: request.toJson(),
+      );
       return MCloudCustomer.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -60,7 +66,10 @@ class MCloudApi {
   /// Get invoice as PDF
   Future<List<int>> getInvoicePdf(String invoiceId) async {
     try {
-      final response = await _dio.get('/api/v4/cloud/subscription/invoices/$invoiceId/pdf', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/cloud/subscription/invoices/$invoiceId/pdf',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;
@@ -68,7 +77,9 @@ class MCloudApi {
   }
 
   /// Create customer payment method
-  Future<void> createCustomerPaymentMethod(MCreatePaymentMethodRequest request) async {
+  Future<void> createCustomerPaymentMethod(
+    MCreatePaymentMethodRequest request,
+  ) async {
     try {
       await _dio.post('/api/v4/cloud/payment', data: request.toJson());
     } catch (e) {
@@ -77,7 +88,9 @@ class MCloudApi {
   }
 
   /// Confirm payment method
-  Future<void> confirmPaymentMethod(MConfirmPaymentMethodRequest request) async {
+  Future<void> confirmPaymentMethod(
+    MConfirmPaymentMethodRequest request,
+  ) async {
     try {
       await _dio.post('/api/v4/cloud/payment/confirm', data: request.toJson());
     } catch (e) {

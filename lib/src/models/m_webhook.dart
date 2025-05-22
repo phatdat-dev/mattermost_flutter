@@ -140,7 +140,13 @@ class MCreateIncomingWebhookRequest {
   final String? username;
   final String? iconUrl;
 
-  MCreateIncomingWebhookRequest({required this.channelId, required this.displayName, required this.description, this.username, this.iconUrl});
+  MCreateIncomingWebhookRequest({
+    required this.channelId,
+    required this.displayName,
+    required this.description,
+    this.username,
+    this.iconUrl,
+  });
 
   Map<String, dynamic> toJson() {
     return {

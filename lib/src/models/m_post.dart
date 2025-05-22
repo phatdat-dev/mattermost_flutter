@@ -83,7 +83,13 @@ class MPostList {
   final String? prevPostId;
   final bool? hasNext;
 
-  MPostList({required this.posts, required this.order, this.nextPostId, this.prevPostId, this.hasNext});
+  MPostList({
+    required this.posts,
+    required this.order,
+    this.nextPostId,
+    this.prevPostId,
+    this.hasNext,
+  });
 
   factory MPostList.fromJson(Map<String, dynamic> json) {
     final postsMap = <String, MPost>{};
@@ -126,7 +132,13 @@ class MCreatePostRequest {
   final String? fileIds;
   final Map<String, dynamic>? props;
 
-  MCreatePostRequest({required this.channelId, required this.message, this.rootId, this.fileIds, this.props});
+  MCreatePostRequest({
+    required this.channelId,
+    required this.message,
+    this.rootId,
+    this.fileIds,
+    this.props,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -146,10 +158,20 @@ class MUpdatePostRequest {
   final bool? isPinned;
   final Map<String, dynamic>? props;
 
-  MUpdatePostRequest({required this.id, required this.message, this.isPinned, this.props});
+  MUpdatePostRequest({
+    required this.id,
+    required this.message,
+    this.isPinned,
+    this.props,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'message': message, if (isPinned != null) 'is_pinned': isPinned, if (props != null) 'props': props};
+    return {
+      'id': id,
+      'message': message,
+      if (isPinned != null) 'is_pinned': isPinned,
+      if (props != null) 'props': props,
+    };
   }
 }
 
@@ -162,14 +184,22 @@ class MPostSearchRequest {
   final int? page;
   final int? perPage;
 
-  MPostSearchRequest({required this.terms, this.isOrSearch, this.timeZoneOffset, this.includeDeletedChannels, this.page, this.perPage});
+  MPostSearchRequest({
+    required this.terms,
+    this.isOrSearch,
+    this.timeZoneOffset,
+    this.includeDeletedChannels,
+    this.page,
+    this.perPage,
+  });
 
   Map<String, dynamic> toJson() {
     return {
       'terms': terms,
       if (isOrSearch != null) 'is_or_search': isOrSearch,
       if (timeZoneOffset != null) 'time_zone_offset': timeZoneOffset,
-      if (includeDeletedChannels != null) 'include_deleted_channels': includeDeletedChannels,
+      if (includeDeletedChannels != null)
+        'include_deleted_channels': includeDeletedChannels,
       if (page != null) 'page': page,
       if (perPage != null) 'per_page': perPage,
     };

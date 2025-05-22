@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for post-related endpoints
 class MPostsApi {
@@ -30,7 +31,10 @@ class MPostsApi {
   /// Update a post
   Future<MPost> updatePost(String postId, MUpdatePostRequest request) async {
     try {
-      final response = await _dio.put('/api/v4/posts/$postId', data: request.toJson());
+      final response = await _dio.put(
+        '/api/v4/posts/$postId',
+        data: request.toJson(),
+      );
       return MPost.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -47,15 +51,28 @@ class MPostsApi {
   }
 
   /// Get posts for a channel
-  Future<MPostList> getPostsForChannel(String channelId, {int page = 0, int perPage = 60, String? since, String? before, String? after}) async {
+  Future<MPostList> getPostsForChannel(
+    String channelId, {
+    int page = 0,
+    int perPage = 60,
+    String? since,
+    String? before,
+    String? after,
+  }) async {
     try {
-      final Map<String, dynamic> queryParams = {'page': page.toString(), 'per_page': perPage.toString()};
+      final Map<String, dynamic> queryParams = {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      };
 
       if (since != null) queryParams['since'] = since;
       if (before != null) queryParams['before'] = before;
       if (after != null) queryParams['after'] = after;
 
-      final response = await _dio.get('/api/v4/channels/$channelId/posts', queryParameters: queryParams);
+      final response = await _dio.get(
+        '/api/v4/channels/$channelId/posts',
+        queryParameters: queryParams,
+      );
       return MPostList.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -73,9 +90,15 @@ class MPostsApi {
   }
 
   /// Search posts
-  Future<MPostList> searchPosts(String teamId, MPostSearchRequest request) async {
+  Future<MPostList> searchPosts(
+    String teamId,
+    MPostSearchRequest request,
+  ) async {
     try {
-      final response = await _dio.post('/api/v4/teams/$teamId/posts/search', data: request.toJson());
+      final response = await _dio.post(
+        '/api/v4/teams/$teamId/posts/search',
+        data: request.toJson(),
+      );
       return MPostList.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -103,7 +126,10 @@ class MPostsApi {
   /// Add reaction to a post
   Future<MReaction> addReaction(MReactionRequest request) async {
     try {
-      final response = await _dio.post('/api/v4/reactions', data: request.toJson());
+      final response = await _dio.post(
+        '/api/v4/reactions',
+        data: request.toJson(),
+      );
       return MReaction.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -111,9 +137,15 @@ class MPostsApi {
   }
 
   /// Remove reaction from a post
-  Future<void> removeReaction(String userId, String postId, String emojiName) async {
+  Future<void> removeReaction(
+    String userId,
+    String postId,
+    String emojiName,
+  ) async {
     try {
-      await _dio.delete('/api/v4/users/$userId/posts/$postId/reactions/$emojiName');
+      await _dio.delete(
+        '/api/v4/users/$userId/posts/$postId/reactions/$emojiName',
+      );
     } catch (e) {
       rethrow;
     }
@@ -130,14 +162,26 @@ class MPostsApi {
   }
 
   /// Get flagged posts
-  Future<MPostList> getFlaggedPosts(String userId, {String? channelId, String? teamId, int page = 0, int perPage = 60}) async {
+  Future<MPostList> getFlaggedPosts(
+    String userId, {
+    String? channelId,
+    String? teamId,
+    int page = 0,
+    int perPage = 60,
+  }) async {
     try {
-      final Map<String, dynamic> queryParams = {'page': page.toString(), 'per_page': perPage.toString()};
+      final Map<String, dynamic> queryParams = {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      };
 
       if (channelId != null) queryParams['channel_id'] = channelId;
       if (teamId != null) queryParams['team_id'] = teamId;
 
-      final response = await _dio.get('/api/v4/users/$userId/posts/flagged', queryParameters: queryParams);
+      final response = await _dio.get(
+        '/api/v4/users/$userId/posts/flagged',
+        queryParameters: queryParams,
+      );
       return MPostList.fromJson(response.data);
     } catch (e) {
       rethrow;

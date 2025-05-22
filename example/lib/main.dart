@@ -77,7 +77,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       // Navigate to the dashboard on successful login
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardScreen(client: client, currentUser: currentUser)));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => DashboardScreen(client: client, currentUser: currentUser),
+        ),
+      );
     } catch (e) {
       setState(() {
         _errorMessage = 'Login failed: $e';
@@ -153,7 +157,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_errorMessage != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(_errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error), textAlign: TextAlign.center),
+                      child: Text(
+                        _errorMessage!,
+                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _login,
@@ -259,12 +267,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [IconButton(icon: const Icon(Icons.exit_to_app), onPressed: _logout, tooltip: 'Logout')],
       ),
       drawer: _buildDrawer(),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-              ? Center(child: Text(_errorMessage!))
-              : _buildBody(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(child: Text(_errorMessage!))
+          : _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Channels'),
@@ -293,7 +300,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-          const ListTile(title: Text('Teams', style: TextStyle(fontWeight: FontWeight.bold))),
+          const ListTile(
+            title: Text('Teams', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
           ..._teams.map(
             (team) => ListTile(
               title: Text(team.displayName),
@@ -431,36 +440,35 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
     }
 
     return Scaffold(
-      body:
-          _channels.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('No channels found'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(onPressed: _createChannel, child: const Text('Create Channel')),
-                  ],
-                ),
-              )
-              : ListView.builder(
-                itemCount: _channels.length,
-                itemBuilder: (context, index) {
-                  final channel = _channels[index];
-                  return ListTile(
-                    leading: Icon(channel.type == 'O' ? Icons.tag : Icons.lock, color: Theme.of(context).colorScheme.primary),
-                    title: Text(channel.displayName),
-                    subtitle: channel.purpose.isNotEmpty ? Text(channel.purpose, maxLines: 1, overflow: TextOverflow.ellipsis) : null,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChannelScreen(client: widget.client, currentUser: widget.currentUser, channel: channel),
-                        ),
-                      );
-                    },
-                  );
-                },
+      body: _channels.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('No channels found'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(onPressed: _createChannel, child: const Text('Create Channel')),
+                ],
               ),
+            )
+          : ListView.builder(
+              itemCount: _channels.length,
+              itemBuilder: (context, index) {
+                final channel = _channels[index];
+                return ListTile(
+                  leading: Icon(channel.type == 'O' ? Icons.tag : Icons.lock, color: Theme.of(context).colorScheme.primary),
+                  title: Text(channel.displayName),
+                  subtitle: channel.purpose.isNotEmpty ? Text(channel.purpose, maxLines: 1, overflow: TextOverflow.ellipsis) : null,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChannelScreen(client: widget.client, currentUser: widget.currentUser, channel: channel),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(onPressed: _createChannel, tooltip: 'Create Channel', child: const Icon(Icons.add)),
     );
   }
@@ -522,7 +530,10 @@ class _CreateChannelDialogState extends State<CreateChannelDialog> {
               DropdownButtonFormField<String>(
                 value: _channelType,
                 decoration: const InputDecoration(labelText: 'Channel Type'),
-                items: const [DropdownMenuItem(value: 'O', child: Text('Public')), DropdownMenuItem(value: 'P', child: Text('Private'))],
+                items: const [
+                  DropdownMenuItem(value: 'O', child: Text('Public')),
+                  DropdownMenuItem(value: 'P', child: Text('Private')),
+                ],
                 onChanged: (value) {
                   setState(() {
                     _channelType = value!;
@@ -646,6 +657,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
       // Reload posts after adding a reaction
       _loadPosts();
     } catch (e) {
+      debugPrint('Failed to add reaction: $e');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add reaction: $e')));
     }
   }
@@ -668,24 +680,23 @@ class _ChannelScreenState extends State<ChannelScreen> {
               // Show channel info
               showDialog(
                 context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: Text(widget.channel.displayName),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('ID: ${widget.channel.id}'),
-                          const SizedBox(height: 8),
-                          Text('Type: ${widget.channel.type == "O" ? "Public" : "Private"}'),
-                          const SizedBox(height: 8),
-                          Text('Purpose: ${widget.channel.purpose}'),
-                          const SizedBox(height: 8),
-                          Text('Header: ${widget.channel.header}'),
-                        ],
-                      ),
-                      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close'))],
-                    ),
+                builder: (context) => AlertDialog(
+                  title: Text(widget.channel.displayName),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ID: ${widget.channel.id}'),
+                      const SizedBox(height: 8),
+                      Text('Type: ${widget.channel.type == "O" ? "Public" : "Private"}'),
+                      const SizedBox(height: 8),
+                      Text('Purpose: ${widget.channel.purpose}'),
+                      const SizedBox(height: 8),
+                      Text('Header: ${widget.channel.header}'),
+                    ],
+                  ),
+                  actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close'))],
+                ),
               );
             },
           ),
@@ -695,37 +706,35 @@ class _ChannelScreenState extends State<ChannelScreen> {
         child: Column(
           children: [
             Expanded(
-              child:
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : _errorMessage != null
-                      ? Center(child: Text(_errorMessage!))
-                      : _posts.isEmpty
-                      ? const Center(child: Text('No messages yet'))
-                      : ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        itemCount: _posts.length,
-                        itemBuilder: (context, index) {
-                          final post = _posts[index];
-                          return MessageTile(
-                            post: post,
-                            currentUserId: widget.currentUser.id,
-                            onReactionTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder:
-                                    (context) => ReactionPicker(
-                                      onEmojiSelected: (emoji) {
-                                        Navigator.pop(context);
-                                        _addReaction(post, emoji);
-                                      },
-                                    ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                  ? Center(child: Text(_errorMessage!))
+                  : _posts.isEmpty
+                  ? const Center(child: Text('No messages yet'))
+                  : ListView.builder(
+                      controller: _scrollController,
+                      reverse: true,
+                      itemCount: _posts.length,
+                      itemBuilder: (context, index) {
+                        final post = _posts[index];
+                        return MessageTile(
+                          post: post,
+                          currentUserId: widget.currentUser.id,
+                          onReactionTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => ReactionPicker(
+                                onEmojiSelected: (emoji) {
+                                  Navigator.pop(context);
+                                  _addReaction(post, emoji);
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -787,7 +796,7 @@ class MessageTile extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isCurrentUser ? Theme.of(context).colorScheme.primary.withOpacity(0.2) : Theme.of(context).colorScheme.surface,
+                color: isCurrentUser ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2) : Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Theme.of(context).dividerColor, width: 1),
               ),
@@ -846,6 +855,7 @@ class ReactionPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // https://docs.mattermost.com/collaborate/react-with-emojis-gifs.html
     // Simple emoji picker with common emojis
     final emojis = ['👍', '👎', '❤️', '😄', '😢', '😮', '🎉', '🚀', '👀', '🙌', '👏', '🔥'];
 

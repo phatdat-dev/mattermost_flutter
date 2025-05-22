@@ -67,9 +67,21 @@ class MCreateComplianceReportRequest {
   final int startAt;
   final int endAt;
 
-  MCreateComplianceReportRequest({required this.desc, required this.keywords, required this.emails, required this.startAt, required this.endAt});
+  MCreateComplianceReportRequest({
+    required this.desc,
+    required this.keywords,
+    required this.emails,
+    required this.startAt,
+    required this.endAt,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'desc': desc, 'keywords': keywords, 'emails': emails, 'start_at': startAt, 'end_at': endAt};
+    return {
+      'desc': desc,
+      'keywords': keywords,
+      'emails': emails,
+      'start_at': startAt,
+      'end_at': endAt,
+    };
   }
 }

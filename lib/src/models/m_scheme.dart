@@ -55,10 +55,14 @@ class MScheme {
       if (createAt != null) 'create_at': createAt,
       if (updateAt != null) 'update_at': updateAt,
       if (deleteAt != null) 'delete_at': deleteAt,
-      if (defaultTeamAdminRole != null) 'default_team_admin_role': defaultTeamAdminRole,
-      if (defaultTeamUserRole != null) 'default_team_user_role': defaultTeamUserRole,
-      if (defaultChannelAdminRole != null) 'default_channel_admin_role': defaultChannelAdminRole,
-      if (defaultChannelUserRole != null) 'default_channel_user_role': defaultChannelUserRole,
+      if (defaultTeamAdminRole != null)
+        'default_team_admin_role': defaultTeamAdminRole,
+      if (defaultTeamUserRole != null)
+        'default_team_user_role': defaultTeamUserRole,
+      if (defaultChannelAdminRole != null)
+        'default_channel_admin_role': defaultChannelAdminRole,
+      if (defaultChannelUserRole != null)
+        'default_channel_user_role': defaultChannelUserRole,
     };
   }
 }
@@ -70,10 +74,20 @@ class MCreateSchemeRequest {
   final String description;
   final String scope;
 
-  MCreateSchemeRequest({required this.name, required this.displayName, required this.description, required this.scope});
+  MCreateSchemeRequest({
+    required this.name,
+    required this.displayName,
+    required this.description,
+    required this.scope,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'display_name': displayName, 'description': description, 'scope': scope};
+    return {
+      'name': name,
+      'display_name': displayName,
+      'description': description,
+      'scope': scope,
+    };
   }
 }
 
@@ -83,9 +97,17 @@ class MPatchSchemeRequest {
   final String displayName;
   final String description;
 
-  MPatchSchemeRequest({required this.name, required this.displayName, required this.description});
+  MPatchSchemeRequest({
+    required this.name,
+    required this.displayName,
+    required this.description,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'display_name': displayName, 'description': description};
+    return {
+      'name': name,
+      'display_name': displayName,
+      'description': description,
+    };
   }
 }

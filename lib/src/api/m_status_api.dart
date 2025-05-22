@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for user status-related endpoints
 class MStatusApi {
@@ -30,7 +31,10 @@ class MStatusApi {
   /// Get user statuses by ID
   Future<List<MUserStatus>> getUserStatusesByIds(List<String> userIds) async {
     try {
-      final response = await _dio.post('/api/v4/users/status/ids', data: userIds);
+      final response = await _dio.post(
+        '/api/v4/users/status/ids',
+        data: userIds,
+      );
       return (response.data as List).map((statusData) => MUserStatus.fromJson(statusData)).toList();
     } catch (e) {
       rethrow;
@@ -38,9 +42,15 @@ class MStatusApi {
   }
 
   /// Update user status
-  Future<MUserStatus> updateUserStatus(String userId, MUpdateUserStatusRequest request) async {
+  Future<MUserStatus> updateUserStatus(
+    String userId,
+    MUpdateUserStatusRequest request,
+  ) async {
     try {
-      final response = await _dio.put('/api/v4/users/$userId/status', data: request.toJson());
+      final response = await _dio.put(
+        '/api/v4/users/$userId/status',
+        data: request.toJson(),
+      );
       return MUserStatus.fromJson(response.data);
     } catch (e) {
       rethrow;

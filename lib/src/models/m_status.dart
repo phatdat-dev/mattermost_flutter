@@ -5,7 +5,12 @@ class MUserStatus {
   final bool manual;
   final int? lastActivityAt;
 
-  MUserStatus({required this.userId, required this.status, required this.manual, this.lastActivityAt});
+  MUserStatus({
+    required this.userId,
+    required this.status,
+    required this.manual,
+    this.lastActivityAt,
+  });
 
   factory MUserStatus.fromJson(Map<String, dynamic> json) {
     return MUserStatus(
@@ -17,7 +22,12 @@ class MUserStatus {
   }
 
   Map<String, dynamic> toJson() {
-    return {'user_id': userId, 'status': status, 'manual': manual, if (lastActivityAt != null) 'last_activity_at': lastActivityAt};
+    return {
+      'user_id': userId,
+      'status': status,
+      'manual': manual,
+      if (lastActivityAt != null) 'last_activity_at': lastActivityAt,
+    };
   }
 }
 

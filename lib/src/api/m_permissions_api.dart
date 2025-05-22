@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/m_permission.dart';
+
+import '../models/m_permission.dart';
 
 /// API for permissions-related endpoints
 class MPermissionsApi {

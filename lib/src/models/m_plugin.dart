@@ -56,13 +56,20 @@ class MPluginManifests {
 
   factory MPluginManifests.fromJson(Map<String, dynamic> json) {
     return MPluginManifests(
-      active: (json['active'] as List<dynamic>? ?? []).map((manifest) => MPluginManifest.fromJson(manifest)).toList(),
-      inactive: (json['inactive'] as List<dynamic>? ?? []).map((manifest) => MPluginManifest.fromJson(manifest)).toList(),
+      active: (json['active'] as List<dynamic>? ?? [])
+          .map((manifest) => MPluginManifest.fromJson(manifest))
+          .toList(),
+      inactive: (json['inactive'] as List<dynamic>? ?? [])
+          .map((manifest) => MPluginManifest.fromJson(manifest))
+          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'active': active.map((manifest) => manifest.toJson()).toList(), 'inactive': inactive.map((manifest) => manifest.toJson()).toList()};
+    return {
+      'active': active.map((manifest) => manifest.toJson()).toList(),
+      'inactive': inactive.map((manifest) => manifest.toJson()).toList(),
+    };
   }
 }
 
@@ -96,6 +103,13 @@ class MPluginStatus {
   }
 
   Map<String, dynamic> toJson() {
-    return {'plugin_id': pluginId, 'name': name, 'description': description, 'version': version, 'is_active': isActive, 'state': state};
+    return {
+      'plugin_id': pluginId,
+      'name': name,
+      'description': description,
+      'version': version,
+      'is_active': isActive,
+      'state': state,
+    };
   }
 }

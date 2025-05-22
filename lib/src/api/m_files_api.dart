@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for file-related endpoints
 class MFilesApi {
@@ -10,14 +11,23 @@ class MFilesApi {
   MFilesApi(this._dio);
 
   /// Upload a file
-  Future<MFileUploadResponse> uploadFile({required String channelId, required File file, String? fileName, String? clientId}) async {
+  Future<MFileUploadResponse> uploadFile({
+    required String channelId,
+    required File file,
+    String? fileName,
+    String? clientId,
+  }) async {
     try {
       final String name = fileName ?? file.path.split('/').last;
       final String mimeType = _getMimeType(name);
 
       final formData = FormData.fromMap({
         'channel_id': channelId,
-        'files': await MultipartFile.fromFile(file.path, filename: name, contentType: DioMediaType.parse(mimeType)),
+        'files': await MultipartFile.fromFile(
+          file.path,
+          filename: name,
+          contentType: DioMediaType.parse(mimeType),
+        ),
         if (clientId != null) 'client_ids': clientId,
       });
 
@@ -51,7 +61,10 @@ class MFilesApi {
   /// Download file
   Future<List<int>> downloadFile(String fileId) async {
     try {
-      final response = await _dio.get('/api/v4/files/$fileId', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/files/$fileId',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;
@@ -61,7 +74,10 @@ class MFilesApi {
   /// Get file thumbnail
   Future<List<int>> getFileThumbnail(String fileId) async {
     try {
-      final response = await _dio.get('/api/v4/files/$fileId/thumbnail', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/files/$fileId/thumbnail',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;
@@ -71,7 +87,10 @@ class MFilesApi {
   /// Get file preview
   Future<List<int>> getFilePreview(String fileId) async {
     try {
-      final response = await _dio.get('/api/v4/files/$fileId/preview', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/files/$fileId/preview',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;

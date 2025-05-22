@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/m_saml.dart';
+
+import '../models/m_saml.dart';
 
 /// API for SAML-related endpoints
 class MSamlApi {

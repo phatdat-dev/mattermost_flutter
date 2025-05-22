@@ -63,7 +63,13 @@ class MGroupMember {
   final int? updateAt;
   final int? deleteAt;
 
-  MGroupMember({required this.groupId, required this.userId, this.createAt, this.updateAt, this.deleteAt});
+  MGroupMember({
+    required this.groupId,
+    required this.userId,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MGroupMember.fromJson(Map<String, dynamic> json) {
     return MGroupMember(
@@ -94,7 +100,10 @@ class MGroupStats {
   MGroupStats({required this.groupId, required this.totalMemberCount});
 
   factory MGroupStats.fromJson(Map<String, dynamic> json) {
-    return MGroupStats(groupId: json['group_id'] ?? '', totalMemberCount: json['total_member_count'] ?? 0);
+    return MGroupStats(
+      groupId: json['group_id'] ?? '',
+      totalMemberCount: json['total_member_count'] ?? 0,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -110,7 +119,13 @@ class MGroupChannel {
   final int? updateAt;
   final int? deleteAt;
 
-  MGroupChannel({required this.groupId, required this.channelId, this.createAt, this.updateAt, this.deleteAt});
+  MGroupChannel({
+    required this.groupId,
+    required this.channelId,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MGroupChannel.fromJson(Map<String, dynamic> json) {
     return MGroupChannel(
@@ -141,7 +156,13 @@ class MGroupTeam {
   final int? updateAt;
   final int? deleteAt;
 
-  MGroupTeam({required this.groupId, required this.teamId, this.createAt, this.updateAt, this.deleteAt});
+  MGroupTeam({
+    required this.groupId,
+    required this.teamId,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MGroupTeam.fromJson(Map<String, dynamic> json) {
     return MGroupTeam(

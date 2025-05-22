@@ -4,7 +4,11 @@ class MDataRetentionPolicy {
   final String? fileRetentionDays;
   final String? boardsRetentionDays;
 
-  MDataRetentionPolicy({this.messageRetentionDays, this.fileRetentionDays, this.boardsRetentionDays});
+  MDataRetentionPolicy({
+    this.messageRetentionDays,
+    this.fileRetentionDays,
+    this.boardsRetentionDays,
+  });
 
   factory MDataRetentionPolicy.fromJson(Map<String, dynamic> json) {
     return MDataRetentionPolicy(
@@ -16,9 +20,11 @@ class MDataRetentionPolicy {
 
   Map<String, dynamic> toJson() {
     return {
-      if (messageRetentionDays != null) 'message_retention_days': messageRetentionDays,
+      if (messageRetentionDays != null)
+        'message_retention_days': messageRetentionDays,
       if (fileRetentionDays != null) 'file_retention_days': fileRetentionDays,
-      if (boardsRetentionDays != null) 'boards_retention_days': boardsRetentionDays,
+      if (boardsRetentionDays != null)
+        'boards_retention_days': boardsRetentionDays,
     };
   }
 }
@@ -32,7 +38,14 @@ class MTeamDataRetentionPolicy {
   final int? updateAt;
   final int? deleteAt;
 
-  MTeamDataRetentionPolicy({required this.id, required this.teamId, required this.postDuration, this.createAt, this.updateAt, this.deleteAt});
+  MTeamDataRetentionPolicy({
+    required this.id,
+    required this.teamId,
+    required this.postDuration,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MTeamDataRetentionPolicy.fromJson(Map<String, dynamic> json) {
     return MTeamDataRetentionPolicy(
@@ -66,7 +79,14 @@ class MChannelDataRetentionPolicy {
   final int? updateAt;
   final int? deleteAt;
 
-  MChannelDataRetentionPolicy({required this.id, required this.channelId, required this.postDuration, this.createAt, this.updateAt, this.deleteAt});
+  MChannelDataRetentionPolicy({
+    required this.id,
+    required this.channelId,
+    required this.postDuration,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MChannelDataRetentionPolicy.fromJson(Map<String, dynamic> json) {
     return MChannelDataRetentionPolicy(
@@ -108,7 +128,10 @@ class MCreateChannelPolicyRequest {
   final String channelId;
   final int postDuration;
 
-  MCreateChannelPolicyRequest({required this.channelId, required this.postDuration});
+  MCreateChannelPolicyRequest({
+    required this.channelId,
+    required this.postDuration,
+  });
 
   Map<String, dynamic> toJson() {
     return {'channel_id': channelId, 'post_duration': postDuration};

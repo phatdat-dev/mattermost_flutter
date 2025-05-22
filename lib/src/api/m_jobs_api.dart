@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for job-related endpoints
 class MJobsApi {
@@ -10,7 +11,13 @@ class MJobsApi {
   /// Get jobs
   Future<List<MJob>> getJobs({int page = 0, int perPage = 60}) async {
     try {
-      final response = await _dio.get('/api/v4/jobs', queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final response = await _dio.get(
+        '/api/v4/jobs',
+        queryParameters: {
+          'page': page.toString(),
+          'per_page': perPage.toString(),
+        },
+      );
       return (response.data as List).map((jobData) => MJob.fromJson(jobData)).toList();
     } catch (e) {
       rethrow;
@@ -48,9 +55,19 @@ class MJobsApi {
   }
 
   /// Get jobs by type
-  Future<List<MJob>> getJobsByType(String jobType, {int page = 0, int perPage = 60}) async {
+  Future<List<MJob>> getJobsByType(
+    String jobType, {
+    int page = 0,
+    int perPage = 60,
+  }) async {
     try {
-      final response = await _dio.get('/api/v4/jobs/type/$jobType', queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final response = await _dio.get(
+        '/api/v4/jobs/type/$jobType',
+        queryParameters: {
+          'page': page.toString(),
+          'per_page': perPage.toString(),
+        },
+      );
       return (response.data as List).map((jobData) => MJob.fromJson(jobData)).toList();
     } catch (e) {
       rethrow;

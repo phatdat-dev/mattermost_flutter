@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/api/api.dart';
-import 'package:mattermost_flutter/src/config/config.dart';
-import 'package:mattermost_flutter/src/websocket/websocket_client.dart';
+
+import 'api/api.dart';
+import 'config/config.dart';
+import 'websocket/websocket_client.dart';
 
 /// Main client class for interacting with Mattermost API
 class MattermostClient {
@@ -50,11 +51,16 @@ class MattermostClient {
     _dio.options.baseUrl = config.baseUrl;
     _dio.options.connectTimeout = config.connectTimeout;
     _dio.options.receiveTimeout = config.receiveTimeout;
-    _dio.options.headers = {'Content-Type': 'application/json', 'Accept': 'application/json'};
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
 
     // Add logging interceptor in debug mode
     if (config.enableDebugLogs) {
-      _dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+      _dio.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
     }
 
     // Add auth interceptor
@@ -105,9 +111,15 @@ class MattermostClient {
   }
 
   /// Login to Mattermost server
-  Future<void> login({required String loginId, required String password}) async {
+  Future<void> login({
+    required String loginId,
+    required String password,
+  }) async {
     try {
-      final response = await _dio.post('/api/v4/users/login', data: {'login_id': loginId, 'password': password});
+      final response = await _dio.post(
+        '/api/v4/users/login',
+        data: {'login_id': loginId, 'password': password},
+      );
 
       final token = response.headers.map['token']?.first;
       if (token != null) {

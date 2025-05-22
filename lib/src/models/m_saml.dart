@@ -4,7 +4,11 @@ class MSamlCertificateStatus {
   final bool publicCertificateFile;
   final bool privateKeyFile;
 
-  MSamlCertificateStatus({required this.idpCertificateFile, required this.publicCertificateFile, required this.privateKeyFile});
+  MSamlCertificateStatus({
+    required this.idpCertificateFile,
+    required this.publicCertificateFile,
+    required this.privateKeyFile,
+  });
 
   factory MSamlCertificateStatus.fromJson(Map<String, dynamic> json) {
     return MSamlCertificateStatus(
@@ -15,6 +19,10 @@ class MSamlCertificateStatus {
   }
 
   Map<String, dynamic> toJson() {
-    return {'idp_certificate_file': idpCertificateFile, 'public_certificate_file': publicCertificateFile, 'private_key_file': privateKeyFile};
+    return {
+      'idp_certificate_file': idpCertificateFile,
+      'public_certificate_file': publicCertificateFile,
+      'private_key_file': privateKeyFile,
+    };
   }
 }

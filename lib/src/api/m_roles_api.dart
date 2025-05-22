@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for role-related endpoints
 class MRolesApi {
@@ -50,7 +51,10 @@ class MRolesApi {
   /// Patch a role
   Future<MRole> patchRole(String roleId, MPatchRoleRequest request) async {
     try {
-      final response = await _dio.put('/api/v4/roles/$roleId/patch', data: request.toJson());
+      final response = await _dio.put(
+        '/api/v4/roles/$roleId/patch',
+        data: request.toJson(),
+      );
       return MRole.fromJson(response.data);
     } catch (e) {
       rethrow;

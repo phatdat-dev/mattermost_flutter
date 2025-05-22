@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for user-related endpoints
 class MUsersApi {
@@ -28,7 +29,10 @@ class MUsersApi {
     String? sort = '',
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {'page': page.toString(), 'per_page': perPage.toString()};
+      final Map<String, dynamic> queryParams = {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      };
 
       if (inTeam != null) queryParams['in_team'] = inTeam;
       if (notInTeam != null) queryParams['not_in_team'] = notInTeam;
@@ -36,7 +40,10 @@ class MUsersApi {
       if (notInChannel != null) queryParams['not_in_channel'] = notInChannel;
       if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
 
-      final response = await _dio.get('/api/v4/users', queryParameters: queryParams);
+      final response = await _dio.get(
+        '/api/v4/users',
+        queryParameters: queryParams,
+      );
 
       return (response.data as List).map((userData) => MUser.fromJson(userData)).toList();
     } catch (e) {
@@ -57,7 +64,10 @@ class MUsersApi {
   /// Update a user
   Future<MUser> updateUser(String userId, MUpdateUserRequest request) async {
     try {
-      final response = await _dio.put('/api/v4/users/$userId', data: request.toJson());
+      final response = await _dio.put(
+        '/api/v4/users/$userId',
+        data: request.toJson(),
+      );
       return MUser.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -104,9 +114,19 @@ class MUsersApi {
   }
 
   /// Update user password
-  Future<void> updateUserPassword(String userId, {required String currentPassword, required String newPassword}) async {
+  Future<void> updateUserPassword(
+    String userId, {
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     try {
-      await _dio.put('/api/v4/users/$userId/password', data: {'current_password': currentPassword, 'new_password': newPassword});
+      await _dio.put(
+        '/api/v4/users/$userId/password',
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+      );
     } catch (e) {
       rethrow;
     }
@@ -115,7 +135,10 @@ class MUsersApi {
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      await _dio.post('/api/v4/users/password/reset/send', data: {'email': email});
+      await _dio.post(
+        '/api/v4/users/password/reset/send',
+        data: {'email': email},
+      );
     } catch (e) {
       rethrow;
     }
@@ -134,7 +157,10 @@ class MUsersApi {
   /// Revoke a user session
   Future<void> revokeUserSession(String userId, String sessionId) async {
     try {
-      await _dio.post('/api/v4/users/$userId/sessions/revoke', data: {'session_id': sessionId});
+      await _dio.post(
+        '/api/v4/users/$userId/sessions/revoke',
+        data: {'session_id': sessionId},
+      );
     } catch (e) {
       rethrow;
     }
@@ -153,7 +179,10 @@ class MUsersApi {
   /// Search users
   Future<List<MUser>> searchUsers(MUserSearchRequest request) async {
     try {
-      final response = await _dio.post('/api/v4/users/search', data: request.toJson());
+      final response = await _dio.post(
+        '/api/v4/users/search',
+        data: request.toJson(),
+      );
       return (response.data as List).map((userData) => MUser.fromJson(userData)).toList();
     } catch (e) {
       rethrow;

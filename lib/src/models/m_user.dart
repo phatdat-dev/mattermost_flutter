@@ -1,4 +1,4 @@
-import 'package:mattermost_flutter/src/models/m_time_zone.dart';
+import 'm_time_zone.dart';
 
 /// User model
 class MUser {

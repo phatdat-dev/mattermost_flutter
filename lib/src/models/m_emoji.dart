@@ -7,7 +7,14 @@ class MEmoji {
   final int? updateAt;
   final int? deleteAt;
 
-  MEmoji({required this.id, required this.name, required this.creator, this.createAt, this.updateAt, this.deleteAt});
+  MEmoji({
+    required this.id,
+    required this.name,
+    required this.creator,
+    this.createAt,
+    this.updateAt,
+    this.deleteAt,
+  });
 
   factory MEmoji.fromJson(Map<String, dynamic> json) {
     return MEmoji(

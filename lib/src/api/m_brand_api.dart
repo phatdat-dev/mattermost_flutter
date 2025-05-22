@@ -11,7 +11,10 @@ class MBrandApi {
   /// Get brand image
   Future<List<int>> getBrandImage() async {
     try {
-      final response = await _dio.get('/api/v4/brand/image', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/brand/image',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;
@@ -22,7 +25,11 @@ class MBrandApi {
   Future<void> uploadBrandImage(File image) async {
     try {
       final formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last, contentType: DioMediaType.parse('image/png')),
+        'image': await MultipartFile.fromFile(
+          image.path,
+          filename: image.path.split('/').last,
+          contentType: DioMediaType.parse('image/png'),
+        ),
       });
 
       await _dio.post('/api/v4/brand/image', data: formData);

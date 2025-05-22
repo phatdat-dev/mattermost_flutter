@@ -7,7 +7,14 @@ class MCloudProduct {
   final String pricePerSeat;
   final List<String>? features;
 
-  MCloudProduct({required this.id, required this.name, required this.description, required this.price, required this.pricePerSeat, this.features});
+  MCloudProduct({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.pricePerSeat,
+    this.features,
+  });
 
   factory MCloudProduct.fromJson(Map<String, dynamic> json) {
     return MCloudProduct(
@@ -16,7 +23,9 @@ class MCloudProduct {
       description: json['description'] ?? '',
       price: json['price'] ?? 0.0,
       pricePerSeat: json['price_per_seat'] ?? '',
-      features: json['features'] != null ? (json['features'] as List).cast<String>() : null,
+      features: json['features'] != null
+          ? (json['features'] as List).cast<String>()
+          : null,
     );
   }
 
@@ -90,15 +99,26 @@ class MCloudCustomer {
   final MCloudCustomerPaymentMethod? paymentMethod;
   final int? createAt;
 
-  MCloudCustomer({required this.id, required this.name, required this.email, this.billingAddress, this.paymentMethod, this.createAt});
+  MCloudCustomer({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.billingAddress,
+    this.paymentMethod,
+    this.createAt,
+  });
 
   factory MCloudCustomer.fromJson(Map<String, dynamic> json) {
     return MCloudCustomer(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      billingAddress: json['billing_address'] != null ? MCloudCustomerAddress.fromJson(json['billing_address']) : null,
-      paymentMethod: json['payment_method'] != null ? MCloudCustomerPaymentMethod.fromJson(json['payment_method']) : null,
+      billingAddress: json['billing_address'] != null
+          ? MCloudCustomerAddress.fromJson(json['billing_address'])
+          : null,
+      paymentMethod: json['payment_method'] != null
+          ? MCloudCustomerPaymentMethod.fromJson(json['payment_method'])
+          : null,
       createAt: json['create_at'],
     );
   }
@@ -124,7 +144,14 @@ class MCloudCustomerAddress {
   final String country;
   final String postalCode;
 
-  MCloudCustomerAddress({required this.line1, this.line2, required this.city, required this.state, required this.country, required this.postalCode});
+  MCloudCustomerAddress({
+    required this.line1,
+    this.line2,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.postalCode,
+  });
 
   factory MCloudCustomerAddress.fromJson(Map<String, dynamic> json) {
     return MCloudCustomerAddress(
@@ -138,7 +165,14 @@ class MCloudCustomerAddress {
   }
 
   Map<String, dynamic> toJson() {
-    return {'line1': line1, if (line2 != null) 'line2': line2, 'city': city, 'state': state, 'country': country, 'postal_code': postalCode};
+    return {
+      'line1': line1,
+      if (line2 != null) 'line2': line2,
+      'city': city,
+      'state': state,
+      'country': country,
+      'postal_code': postalCode,
+    };
   }
 }
 
@@ -172,7 +206,14 @@ class MCloudCustomerPaymentMethod {
   }
 
   Map<String, dynamic> toJson() {
-    return {'type': type, 'last_four': lastFour, 'exp_month': expMonth, 'exp_year': expYear, 'card_brand': cardBrand, 'name': name};
+    return {
+      'type': type,
+      'last_four': lastFour,
+      'exp_month': expMonth,
+      'exp_year': expYear,
+      'card_brand': cardBrand,
+      'name': name,
+    };
   }
 }
 

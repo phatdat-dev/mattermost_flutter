@@ -134,7 +134,11 @@ class MTeamStats {
   final int totalMemberCount;
   final int activeMemberCount;
 
-  MTeamStats({required this.teamId, required this.totalMemberCount, required this.activeMemberCount});
+  MTeamStats({
+    required this.teamId,
+    required this.totalMemberCount,
+    required this.activeMemberCount,
+  });
 
   factory MTeamStats.fromJson(Map<String, dynamic> json) {
     return MTeamStats(
@@ -145,7 +149,11 @@ class MTeamStats {
   }
 
   Map<String, dynamic> toJson() {
-    return {'team_id': teamId, 'total_member_count': totalMemberCount, 'active_member_count': activeMemberCount};
+    return {
+      'team_id': teamId,
+      'total_member_count': totalMemberCount,
+      'active_member_count': activeMemberCount,
+    };
   }
 }
 
@@ -191,7 +199,14 @@ class MUpdateTeamRequest {
   final String? allowedDomains;
   final bool? allowOpenInvite;
 
-  MUpdateTeamRequest({this.name, this.displayName, this.description, this.companyName, this.allowedDomains, this.allowOpenInvite});
+  MUpdateTeamRequest({
+    this.name,
+    this.displayName,
+    this.description,
+    this.companyName,
+    this.allowedDomains,
+    this.allowOpenInvite,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -211,10 +226,18 @@ class MAddTeamMemberRequest {
   final String userId;
   final String? roles;
 
-  MAddTeamMemberRequest({required this.teamId, required this.userId, this.roles});
+  MAddTeamMemberRequest({
+    required this.teamId,
+    required this.userId,
+    this.roles,
+  });
 
   Map<String, dynamic> toJson() {
-    return {'team_id': teamId, 'user_id': userId, if (roles != null) 'roles': roles};
+    return {
+      'team_id': teamId,
+      'user_id': userId,
+      if (roles != null) 'roles': roles,
+    };
   }
 }
 
@@ -226,7 +249,13 @@ class MTeamSearchRequest {
   final int? perPage;
   final bool? excludePolicyConstrained;
 
-  MTeamSearchRequest({this.term, this.allowOpenInvite, this.page, this.perPage, this.excludePolicyConstrained});
+  MTeamSearchRequest({
+    this.term,
+    this.allowOpenInvite,
+    this.page,
+    this.perPage,
+    this.excludePolicyConstrained,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -234,7 +263,8 @@ class MTeamSearchRequest {
       if (allowOpenInvite != null) 'allow_open_invite': allowOpenInvite,
       if (page != null) 'page': page,
       if (perPage != null) 'per_page': perPage,
-      if (excludePolicyConstrained != null) 'exclude_policy_constrained': excludePolicyConstrained,
+      if (excludePolicyConstrained != null)
+        'exclude_policy_constrained': excludePolicyConstrained,
     };
   }
 }

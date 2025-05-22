@@ -147,7 +147,12 @@ class MChannelStats {
   final int guestCount;
   final int pinnedPostCount;
 
-  MChannelStats({required this.channelId, required this.memberCount, required this.guestCount, required this.pinnedPostCount});
+  MChannelStats({
+    required this.channelId,
+    required this.memberCount,
+    required this.guestCount,
+    required this.pinnedPostCount,
+  });
 
   factory MChannelStats.fromJson(Map<String, dynamic> json) {
     return MChannelStats(
@@ -159,7 +164,12 @@ class MChannelStats {
   }
 
   Map<String, dynamic> toJson() {
-    return {'channel_id': channelId, 'member_count': memberCount, 'guest_count': guestCount, 'pinnedpost_count': pinnedPostCount};
+    return {
+      'channel_id': channelId,
+      'member_count': memberCount,
+      'guest_count': guestCount,
+      'pinnedpost_count': pinnedPostCount,
+    };
   }
 }
 
@@ -182,7 +192,14 @@ class MCreateChannelRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {'team_id': teamId, 'name': name, 'display_name': displayName, 'purpose': purpose, 'header': header, 'type': type};
+    return {
+      'team_id': teamId,
+      'name': name,
+      'display_name': displayName,
+      'purpose': purpose,
+      'header': header,
+      'type': type,
+    };
   }
 }
 
@@ -193,7 +210,12 @@ class MUpdateChannelRequest {
   final String? purpose;
   final String? header;
 
-  MUpdateChannelRequest({this.name, this.displayName, this.purpose, this.header});
+  MUpdateChannelRequest({
+    this.name,
+    this.displayName,
+    this.purpose,
+    this.header,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -213,7 +235,10 @@ class MAddChannelMemberRequest {
   MAddChannelMemberRequest({required this.userId, this.postRootId});
 
   Map<String, dynamic> toJson() {
-    return {'user_id': userId, if (postRootId != null) 'post_root_id': postRootId};
+    return {
+      'user_id': userId,
+      if (postRootId != null) 'post_root_id': postRootId,
+    };
   }
 }
 
@@ -246,11 +271,14 @@ class MChannelSearchRequest {
   Map<String, dynamic> toJson() {
     return {
       if (term != null) 'term': term,
-      if (notAssociatedToGroup != null) 'not_associated_to_group': notAssociatedToGroup,
+      if (notAssociatedToGroup != null)
+        'not_associated_to_group': notAssociatedToGroup,
       if (groupConstrained != null) 'group_constrained': groupConstrained,
-      if (excludeDefaultChannels != null) 'exclude_default_channels': excludeDefaultChannels,
+      if (excludeDefaultChannels != null)
+        'exclude_default_channels': excludeDefaultChannels,
       if (includeDeleted != null) 'include_deleted': includeDeleted,
-      if (excludePolicyConstrained != null) 'exclude_policy_constrained': excludePolicyConstrained,
+      if (excludePolicyConstrained != null)
+        'exclude_policy_constrained': excludePolicyConstrained,
       if (publicChannels != null) 'public': publicChannels,
       if (privateChannels != null) 'private': privateChannels,
       if (page != null) 'page': page,

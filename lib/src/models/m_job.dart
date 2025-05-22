@@ -8,7 +8,15 @@ class MJob {
   final int? createAt;
   final Map<String, dynamic>? data;
 
-  MJob({required this.id, required this.type, required this.status, this.startAt, this.lastActivityAt, this.createAt, this.data});
+  MJob({
+    required this.id,
+    required this.type,
+    required this.status,
+    this.startAt,
+    this.lastActivityAt,
+    this.createAt,
+    this.data,
+  });
 
   factory MJob.fromJson(Map<String, dynamic> json) {
     return MJob(

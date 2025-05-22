@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/m_export.dart';
+
+import '../models/m_export.dart';
 
 /// API for exports-related endpoints
 class MExportsApi {
@@ -29,7 +30,10 @@ class MExportsApi {
   /// Download an export
   Future<List<int>> downloadExport(String exportId) async {
     try {
-      final response = await _dio.get('/api/v4/exports/$exportId/download', options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(
+        '/api/v4/exports/$exportId/download',
+        options: Options(responseType: ResponseType.bytes),
+      );
       return response.data;
     } catch (e) {
       rethrow;

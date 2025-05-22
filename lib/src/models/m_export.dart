@@ -7,7 +7,14 @@ class MExport {
   final String? fileName;
   final String? status;
 
-  MExport({required this.id, this.createAt, this.deleteAt, this.actingUserId, this.fileName, this.status});
+  MExport({
+    required this.id,
+    this.createAt,
+    this.deleteAt,
+    this.actingUserId,
+    this.fileName,
+    this.status,
+  });
 
   factory MExport.fromJson(Map<String, dynamic> json) {
     return MExport(

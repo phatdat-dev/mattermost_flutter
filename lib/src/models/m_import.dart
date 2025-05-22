@@ -8,10 +8,20 @@ class MImport {
   MImport({required this.id, this.createAt, this.status, this.data});
 
   factory MImport.fromJson(Map<String, dynamic> json) {
-    return MImport(id: json['id'] ?? '', createAt: json['create_at'], status: json['status'], data: json['data']);
+    return MImport(
+      id: json['id'] ?? '',
+      createAt: json['create_at'],
+      status: json['status'],
+      data: json['data'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, if (createAt != null) 'create_at': createAt, if (status != null) 'status': status, if (data != null) 'data': data};
+    return {
+      'id': id,
+      if (createAt != null) 'create_at': createAt,
+      if (status != null) 'status': status,
+      if (data != null) 'data': data,
+    };
   }
 }

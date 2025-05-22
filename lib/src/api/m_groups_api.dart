@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:mattermost_flutter/src/models/models.dart';
+
+import '../models/models.dart';
 
 /// API for group-related endpoints
 class MGroupsApi {
@@ -8,16 +9,27 @@ class MGroupsApi {
   MGroupsApi(this._dio);
 
   /// Get groups
-  Future<List<MGroup>> getGroups({int page = 0, int perPage = 60, bool? filterAllowReference, String? q}) async {
+  Future<List<MGroup>> getGroups({
+    int page = 0,
+    int perPage = 60,
+    bool? filterAllowReference,
+    String? q,
+  }) async {
     try {
-      final Map<String, dynamic> queryParams = {'page': page.toString(), 'per_page': perPage.toString()};
+      final Map<String, dynamic> queryParams = {
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      };
 
       if (filterAllowReference != null) {
         queryParams['filter_allow_reference'] = filterAllowReference.toString();
       }
       if (q != null && q.isNotEmpty) queryParams['q'] = q;
 
-      final response = await _dio.get('/api/v4/groups', queryParameters: queryParams);
+      final response = await _dio.get(
+        '/api/v4/groups',
+        queryParameters: queryParams,
+      );
       return (response.data as List).map((groupData) => MGroup.fromJson(groupData)).toList();
     } catch (e) {
       rethrow;
@@ -45,9 +57,19 @@ class MGroupsApi {
   }
 
   /// Get group members
-  Future<List<MGroupMember>> getGroupMembers(String groupId, {int page = 0, int perPage = 60}) async {
+  Future<List<MGroupMember>> getGroupMembers(
+    String groupId, {
+    int page = 0,
+    int perPage = 60,
+  }) async {
     try {
-      final response = await _dio.get('/api/v4/groups/$groupId/members', queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final response = await _dio.get(
+        '/api/v4/groups/$groupId/members',
+        queryParameters: {
+          'page': page.toString(),
+          'per_page': perPage.toString(),
+        },
+      );
       return (response.data as List).map((memberData) => MGroupMember.fromJson(memberData)).toList();
     } catch (e) {
       rethrow;
@@ -55,9 +77,19 @@ class MGroupsApi {
   }
 
   /// Get group channels
-  Future<List<MGroupChannel>> getGroupChannels(String groupId, {int page = 0, int perPage = 60}) async {
+  Future<List<MGroupChannel>> getGroupChannels(
+    String groupId, {
+    int page = 0,
+    int perPage = 60,
+  }) async {
     try {
-      final response = await _dio.get('/api/v4/groups/$groupId/channels', queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final response = await _dio.get(
+        '/api/v4/groups/$groupId/channels',
+        queryParameters: {
+          'page': page.toString(),
+          'per_page': perPage.toString(),
+        },
+      );
       return (response.data as List).map((channelData) => MGroupChannel.fromJson(channelData)).toList();
     } catch (e) {
       rethrow;
@@ -65,9 +97,19 @@ class MGroupsApi {
   }
 
   /// Get group teams
-  Future<List<MGroupTeam>> getGroupTeams(String groupId, {int page = 0, int perPage = 60}) async {
+  Future<List<MGroupTeam>> getGroupTeams(
+    String groupId, {
+    int page = 0,
+    int perPage = 60,
+  }) async {
     try {
-      final response = await _dio.get('/api/v4/groups/$groupId/teams', queryParameters: {'page': page.toString(), 'per_page': perPage.toString()});
+      final response = await _dio.get(
+        '/api/v4/groups/$groupId/teams',
+        queryParameters: {
+          'page': page.toString(),
+          'per_page': perPage.toString(),
+        },
+      );
       return (response.data as List).map((teamData) => MGroupTeam.fromJson(teamData)).toList();
     } catch (e) {
       rethrow;
@@ -77,7 +119,9 @@ class MGroupsApi {
   /// Link a group to a team
   Future<MGroupTeam> linkGroupToTeam(String groupId, String teamId) async {
     try {
-      final response = await _dio.post('/api/v4/groups/$groupId/teams/$teamId/link');
+      final response = await _dio.post(
+        '/api/v4/groups/$groupId/teams/$teamId/link',
+      );
       return MGroupTeam.fromJson(response.data);
     } catch (e) {
       rethrow;
@@ -94,9 +138,14 @@ class MGroupsApi {
   }
 
   /// Link a group to a channel
-  Future<MGroupChannel> linkGroupToChannel(String groupId, String channelId) async {
+  Future<MGroupChannel> linkGroupToChannel(
+    String groupId,
+    String channelId,
+  ) async {
     try {
-      final response = await _dio.post('/api/v4/groups/$groupId/channels/$channelId/link');
+      final response = await _dio.post(
+        '/api/v4/groups/$groupId/channels/$channelId/link',
+      );
       return MGroupChannel.fromJson(response.data);
     } catch (e) {
       rethrow;

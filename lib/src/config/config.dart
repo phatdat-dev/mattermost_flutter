@@ -2,16 +2,16 @@
 class MattermostConfig {
   /// Base URL of the Mattermost server
   final String baseUrl;
-  
+
   /// Authentication token
   String? token;
-  
+
   /// Connection timeout in milliseconds
   final Duration connectTimeout;
-  
+
   /// Receive timeout in milliseconds
   final Duration receiveTimeout;
-  
+
   /// Enable debug logs
   final bool enableDebugLogs;
 

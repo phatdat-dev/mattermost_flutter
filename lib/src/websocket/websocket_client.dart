@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:mattermost_flutter/src/config/config.dart';
-import 'package:mattermost_flutter/src/mattermost_client.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import '../config/config.dart';
+import '../mattermost_client.dart';
 
 /// WebSocket client for Mattermost
 class MattermostWebSocketClient {
@@ -103,7 +104,11 @@ class MattermostWebSocketClient {
 
     if (message.containsKey('seq_reply')) {
       // Handle response to a previous request
-      _eventController.add({'event': 'response', 'seq': message['seq_reply'], 'data': message});
+      _eventController.add({
+        'event': 'response',
+        'seq': message['seq_reply'],
+        'data': message,
+      });
     }
   }
 
