@@ -34,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _serverController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _tokenController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -44,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _serverController.text = 'https://your-mattermost-server.com';
     _usernameController.text = '';
     _passwordController.text = '';
+    _tokenController.text = '';
   }
 
   @override
@@ -51,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _serverController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _tokenController.dispose();
     super.dispose();
   }
 
@@ -68,8 +71,13 @@ class _LoginScreenState extends State<LoginScreen> {
       // Initialize the Mattermost client
       final client = MattermostClient(config: MattermostConfig(baseUrl: _serverController.text, enableDebugLogs: true));
 
-      // Login with provided credentials
-      await client.login(loginId: _usernameController.text, password: _passwordController.text);
+      if (_tokenController.text.isNotEmpty) {
+        // Or use token-based authentication
+        await client.login(token: _tokenController.text);
+      } else {
+        // Login with provided credentials
+        await client.login(loginId: _usernameController.text, password: _passwordController.text);
+      }
 
       // Get current user information
       final currentUser = await client.users.getMe();
@@ -134,21 +142,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: const InputDecoration(labelText: 'Username or Email', border: OutlineInputBorder(), prefixIcon: Icon(Icons.person)),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter username or email';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter username or email';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
                     decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock)),
                     obscureText: true,
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Please enter password';
+                    //   }
+                    //   return null;
+                    // },
+                  ),
+                  // Optional token-based authentication
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _tokenController,
+                    decoration: const InputDecoration(
+                      labelText: 'Or Login with Token (Optional)',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.vpn_key),
+                    ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter password';
+                      if (value != null && value.isNotEmpty && value.length < 10) {
+                        return 'Token must be at least 10 characters';
                       }
                       return null;
                     },

@@ -112,20 +112,29 @@ class MattermostClient {
 
   /// Login to Mattermost server
   Future<void> login({
-    required String loginId,
-    required String password,
-  }) async {
-    try {
-      final response = await _dio.post(
-        '/api/v4/users/login',
-        data: {'login_id': loginId, 'password': password},
-      );
+    String? loginId,
+    String? password,
 
-      final token = response.headers.map['token']?.first;
-      if (token != null) {
-        config.token = token;
-        _dio.options.headers['Authorization'] = 'Bearer $token';
+    /// Optional token for token-based authentication
+    String? token,
+  }) async {
+    assert(
+      (loginId != null && password != null) || token != null,
+      'Either loginId and password or token must be provided',
+    );
+
+    try {
+      if (token == null && token!.isEmpty) {
+        final response = await _dio.post(
+          '/api/v4/users/login',
+          data: {'login_id': loginId, 'password': password},
+        );
+
+        token = response.headers.map['token']?.first;
       }
+
+      config.token = token;
+      _dio.options.headers['Authorization'] = 'Bearer $token';
 
       // Connect to WebSocket after successful login
       await webSocket.connect();
