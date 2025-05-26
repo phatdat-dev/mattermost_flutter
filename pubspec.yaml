@@ -1,6 +1,6 @@
 name: mattermost_flutter
 description: "A complete Flutter package for interacting with the Mattermost API, featuring comprehensive endpoint coverage, WebSocket support, and robust error handling. Build custom Mattermost clients and integrations with ease."
-version: 1.0.4
+version: 1.0.6
 homepage: https://github.com/phatdat-dev/mattermost_flutter
 
 environment:

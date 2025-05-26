@@ -111,12 +111,19 @@ class MattermostClient {
   }
 
   /// Login to Mattermost server
+  /// You can get infomation about the current user after login by calling [MUsersApi.getMe] method on the [users] API.
+  /// ```dart
+  /// final currentUser = await client.users.getMe();
+  /// ```
   Future<void> login({
+    String? id,
     String? loginId,
     String? password,
 
     /// Optional token for token-based authentication
     String? token,
+    String? deviceId,
+    String? ldapOnly,
   }) async {
     assert(
       (loginId != null && password != null) || token != null,
@@ -124,10 +131,17 @@ class MattermostClient {
     );
 
     try {
-      if (token == null && token!.isEmpty) {
+      if (token == null || token.isEmpty) {
         final response = await _dio.post(
           '/api/v4/users/login',
-          data: {'login_id': loginId, 'password': password},
+          data: {
+            if (id != null) 'id': id,
+            if (loginId != null) 'login_id': loginId,
+            if (password != null) 'password': password,
+            if (token != null) 'token': token,
+            if (deviceId != null) 'device_id': deviceId,
+            if (ldapOnly != null) 'ldap_only': ldapOnly,
+          },
         );
 
         token = response.headers.map['token']?.first;
@@ -137,6 +151,42 @@ class MattermostClient {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
       // Connect to WebSocket after successful login
+      await webSocket.connect();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // MSwitchLoginRequest
+  /// Switch login method
+  Future<void> switchLogin({
+    required String currentService,
+    required String newService,
+    String? email,
+    String? password,
+    String? mfaCode,
+    String? ldapId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/api/v4/users/login/switch',
+        data: {
+          'current_service': currentService,
+          'new_service': newService,
+          if (email != null) 'email': email,
+          if (password != null) 'password': password,
+          if (mfaCode != null) 'mfa_code': mfaCode,
+          if (ldapId != null) 'ldap_id': ldapId,
+        },
+      );
+
+      final token = response.headers.map['token']?.first;
+      if (token != null && token.isNotEmpty) {
+        config.token = token;
+        _dio.options.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Reconnect WebSocket after switching login
       await webSocket.connect();
     } catch (e) {
       rethrow;
