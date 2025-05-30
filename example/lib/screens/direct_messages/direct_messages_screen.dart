@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mattermost_example/screens/channels_screen.dart';
-import 'package:mattermost_example/screens/group_chat_screen.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
-class DirectMessagesScreen extends StatefulWidget {
-  final MattermostClient client;
-  final MUser currentUser;
+import '../../routes/app_routes.dart';
+import '../main/channels_screen.dart';
+import 'group_chat_screen.dart';
 
-  const DirectMessagesScreen({super.key, required this.client, required this.currentUser});
+class DirectMessagesScreen extends StatefulWidget {
+  const DirectMessagesScreen({super.key});
 
   @override
   State<DirectMessagesScreen> createState() => _DirectMessagesScreenState();
@@ -46,9 +45,9 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
     try {
       // Get all channels for the current user
       final allChannels = await Future.wait(
-        (await widget.client.teams.getTeamsForUser(
-          widget.currentUser.id,
-        )).map((team) => widget.client.channels.getChannelsForUser(widget.currentUser.id, team.id)),
+        (await AppRoutes.client!.teams.getTeamsForUser(
+          AppRoutes.currentUser!.id,
+        )).map((team) => AppRoutes.client!.channels.getChannelsForUser(AppRoutes.currentUser!.id, team.id)),
       );
 
       // Flatten the list and filter direct message channels (type 'D')
@@ -85,11 +84,11 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
     try {
       final request = MUserSearchRequest(term: term, limit: 20);
-      final users = await widget.client.users.searchUsers(request);
+      final users = await AppRoutes.client!.users.searchUsers(request);
 
       // Filter out the current user
       setState(() {
-        _searchResults = users.where((user) => user.id != widget.currentUser.id).toList();
+        _searchResults = users.where((user) => user.id != AppRoutes.currentUser!.id).toList();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error searching users: $e')));
@@ -114,7 +113,7 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
     try {
       // Create a direct message channel
-      final channel = await widget.client.channels.createDirectChannel(widget.currentUser.id, user.id);
+      final channel = await AppRoutes.client!.channels.createDirectChannel(AppRoutes.currentUser!.id, user.id);
 
       if (!mounted) return;
 
@@ -122,7 +121,8 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
       Navigator.of(context)
           .push(
             MaterialPageRoute(
-              builder: (context) => DirectChatScreen(client: widget.client, currentUser: widget.currentUser, otherUser: user, channel: channel),
+              builder: (context) =>
+                  DirectChatScreen(client: AppRoutes.client!, currentUser: AppRoutes.currentUser!, otherUser: user, channel: channel),
             ),
           )
           .then((_) {
@@ -149,17 +149,18 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
       // Get the other user's ID from the channel name
       // Direct message channel names are in the format [user_id]__[other_user_id]
       final userIds = channel.name.split('__');
-      final otherUserId = userIds[0] == widget.currentUser.id ? userIds[1] : userIds[0];
+      final otherUserId = userIds[0] == AppRoutes.currentUser!.id ? userIds[1] : userIds[0];
 
       // Get the other user's details
-      final otherUser = await widget.client.users.getUser(otherUserId);
+      final otherUser = await AppRoutes.client!.users.getUser(otherUserId);
 
       if (!mounted) return;
 
       // Navigate to the chat screen
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => DirectChatScreen(client: widget.client, currentUser: widget.currentUser, otherUser: otherUser, channel: channel),
+          builder: (context) =>
+              DirectChatScreen(client: AppRoutes.client!, currentUser: AppRoutes.currentUser!, otherUser: otherUser, channel: channel),
         ),
       );
     } catch (e) {
@@ -284,7 +285,7 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
   Future<void> _createGroupChat() async {
     final selectedUsers = await Navigator.of(context).push<List<MUser>>(
       MaterialPageRoute(
-        builder: (context) => AddMembersScreen(client: widget.client, currentUser: widget.currentUser, existingMembers: []),
+        builder: (context) => AddMembersScreen(client: AppRoutes.client!, currentUser: AppRoutes.currentUser!, existingMembers: []),
       ),
     );
 
@@ -295,11 +296,11 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
       try {
         // Add current user to the list
-        final allMembers = [widget.currentUser, ...selectedUsers];
+        final allMembers = [AppRoutes.currentUser!, ...selectedUsers];
         final userIds = allMembers.map((user) => user.id).toList();
 
         // Create group message channel
-        final channel = await widget.client.channels.createGroupChannel(userIds);
+        final channel = await AppRoutes.client!.channels.createGroupChannel(userIds);
 
         if (!mounted) return;
 
@@ -307,7 +308,8 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
         Navigator.of(context)
             .push(
               MaterialPageRoute(
-                builder: (context) => GroupChatScreen(client: widget.client, currentUser: widget.currentUser, channel: channel, members: allMembers),
+                builder: (context) =>
+                    GroupChatScreen(client: AppRoutes.client!, currentUser: AppRoutes.currentUser!, channel: channel, members: allMembers),
               ),
             )
             .then((_) {
@@ -330,13 +332,13 @@ class _DirectMessagesScreenState extends State<DirectMessagesScreen> {
     try {
       // Get the other user's ID from the channel name
       final userIds = channel.name.split('__');
-      final otherUserId = userIds[0] == widget.currentUser.id ? userIds[1] : userIds[0];
+      final otherUserId = userIds[0] == AppRoutes.currentUser!.id ? userIds[1] : userIds[0];
 
       // Get the other user's details
-      final otherUser = await widget.client.users.getUser(otherUserId);
+      final otherUser = await AppRoutes.client!.users.getUser(otherUserId);
 
       // Get the last message in the channel
-      final postList = await widget.client.posts.getPostsForChannel(channel.id, perPage: 1);
+      final postList = await AppRoutes.client!.posts.getPostsForChannel(channel.id, perPage: 1);
       final lastPost = postList.posts.isNotEmpty ? postList.posts.values.first : null;
 
       return ListTile(
@@ -423,7 +425,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
   }
 
   void _setupWebSocket() {
-    _websocketSubscription = widget.client.webSocket.events.listen((event) {
+    _websocketSubscription = AppRoutes.client!.webSocket.events.listen((event) {
       if (event['event'] == 'posted' && event['data'] != null && event['data']['channel_id'] == widget.channel.id) {
         // Reload posts when a new message is posted in this channel
         _loadPosts();
@@ -439,7 +441,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
 
     try {
       // Get posts for the channel
-      final postList = await widget.client.posts.getPostsForChannel(widget.channel.id, perPage: 50);
+      final postList = await AppRoutes.client!.posts.getPostsForChannel(widget.channel.id, perPage: 50);
 
       setState(() {
         _posts = postList.posts.values.toList()..sort((a, b) => (b.createAt ?? 0).compareTo(a.createAt ?? 0));
@@ -462,7 +464,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
 
     try {
       // Get posts for the channel
-      final postList = await widget.client.posts.getPostsForChannel(widget.channel.id, perPage: 50);
+      final postList = await AppRoutes.client!.posts.getPostsForChannel(widget.channel.id, perPage: 50);
 
       if (mounted) {
         setState(() {
@@ -481,7 +483,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
     _messageController.clear();
 
     try {
-      await widget.client.posts.createPost(MCreatePostRequest(channelId: widget.channel.id, message: message));
+      await AppRoutes.client!.posts.createPost(MCreatePostRequest(channelId: widget.channel.id, message: message));
 
       // Reload posts after sending a message
       _loadPosts();
@@ -492,7 +494,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
 
   Future<void> _addReaction(MPost post, String emoji) async {
     try {
-      await widget.client.posts.addReaction(MReactionRequest(userId: widget.currentUser.id, postId: post.id, emojiName: emoji));
+      await AppRoutes.client!.posts.addReaction(MReactionRequest(userId: AppRoutes.currentUser!.id, postId: post.id, emojiName: emoji));
 
       // Reload posts after adding a reaction
       _loadPosts();
@@ -576,7 +578,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                         final post = _posts[index];
                         return DirectMessageTile(
                           post: post,
-                          currentUser: widget.currentUser,
+                          currentUser: AppRoutes.currentUser!,
                           otherUser: widget.otherUser,
                           onReactionTap: () {
                             showModalBottomSheet(

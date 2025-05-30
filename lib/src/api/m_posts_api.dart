@@ -29,10 +29,10 @@ class MPostsApi {
   }
 
   /// Update a post
-  Future<MPost> updatePost(String postId, MUpdatePostRequest request) async {
+  Future<MPost> updatePost(MUpdatePostRequest request) async {
     try {
       final response = await _dio.put(
-        '/api/v4/posts/$postId',
+        '/api/v4/posts/${request.id}',
         data: request.toJson(),
       );
       return MPost.fromJson(response.data);

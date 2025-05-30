@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
+import '../../routes/app_routes.dart';
+
 class ChannelsScreen extends StatefulWidget {
-  final MattermostClient client;
-  final MUser currentUser;
   final MTeam team;
 
-  const ChannelsScreen({super.key, required this.client, required this.currentUser, required this.team});
+  const ChannelsScreen({super.key, required this.team});
 
   @override
   State<ChannelsScreen> createState() => _ChannelsScreenState();
@@ -41,7 +41,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
 
     try {
       // Get channels for the selected team
-      _channels = await widget.client.channels.getChannelsForUser(widget.currentUser.id, widget.team.id);
+      _channels = await AppRoutes.client.channels.getChannelsForUser(AppRoutes.currentUser!.id, widget.team.id);
     } catch (e) {
       setState(() {
         _errorMessage = 'Failed to load channels: $e';
@@ -60,7 +60,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
 
     if (result != null) {
       try {
-        await widget.client.channels.createChannel(
+        await AppRoutes.client.channels.createChannel(
           MCreateChannelRequest(
             teamId: widget.team.id,
             name: result['name']!.toLowerCase().replaceAll(' ', '-'),
@@ -112,7 +112,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ChannelScreen(client: widget.client, currentUser: widget.currentUser, channel: channel),
+                        builder: (context) => ChannelScreen(channel: channel),
                       ),
                     );
                   },
@@ -216,11 +216,9 @@ class _CreateChannelDialogState extends State<CreateChannelDialog> {
 }
 
 class ChannelScreen extends StatefulWidget {
-  final MattermostClient client;
-  final MUser currentUser;
   final MChannel channel;
 
-  const ChannelScreen({super.key, required this.client, required this.currentUser, required this.channel});
+  const ChannelScreen({super.key, required this.channel});
 
   @override
   State<ChannelScreen> createState() => _ChannelScreenState();
@@ -250,7 +248,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
   }
 
   void _setupWebSocket() {
-    _websocketSubscription = widget.client.webSocket.events.listen((event) {
+    _websocketSubscription = AppRoutes.client.webSocket.events.listen((event) {
       if (event['event'] == 'posted' && event['data'] != null && event['data']['channel_id'] == widget.channel.id) {
         // Reload posts when a new message is posted in this channel
         _loadPosts();
@@ -266,7 +264,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
 
     try {
       // Get posts for the channel
-      final postList = await widget.client.posts.getPostsForChannel(widget.channel.id, perPage: 50);
+      final postList = await AppRoutes.client.posts.getPostsForChannel(widget.channel.id, perPage: 50);
 
       setState(() {
         _posts = postList.posts.values.toList()..sort((a, b) => (b.createAt ?? 0).compareTo(a.createAt ?? 0));
@@ -291,7 +289,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
     _messageController.clear();
 
     try {
-      await widget.client.posts.createPost(MCreatePostRequest(channelId: widget.channel.id, message: message));
+      await AppRoutes.client.posts.createPost(MCreatePostRequest(channelId: widget.channel.id, message: message));
 
       // Reload posts after sending a message
       _loadPosts();
@@ -302,7 +300,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
 
   Future<void> _addReaction(MPost post, String emoji) async {
     try {
-      await widget.client.posts.addReaction(MReactionRequest(userId: widget.currentUser.id, postId: post.id, emojiName: emoji));
+      await AppRoutes.client.posts.addReaction(MReactionRequest(userId: AppRoutes.currentUser!.id, postId: post.id, emojiName: emoji));
 
       // Reload posts after adding a reaction
       _loadPosts();
@@ -370,7 +368,7 @@ class _ChannelScreenState extends State<ChannelScreen> {
                         final post = _posts[index];
                         return MessageTile(
                           post: post,
-                          currentUserId: widget.currentUser.id,
+                          currentUserId: AppRoutes.currentUser!.id,
                           onReactionTap: () {
                             showModalBottomSheet(
                               context: context,

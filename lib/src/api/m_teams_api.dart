@@ -55,10 +55,10 @@ class MTeamsApi {
   }
 
   /// Update a team
-  Future<MTeam> updateTeam(String teamId, MUpdateTeamRequest request) async {
+  Future<MTeam> updateTeam(MUpdateTeamRequest request) async {
     try {
       final response = await _dio.put(
-        '/api/v4/teams/$teamId',
+        '/api/v4/teams/${request.id}',
         data: request.toJson(),
       );
       return MTeam.fromJson(response.data);
@@ -74,6 +74,16 @@ class MTeamsApi {
         '/api/v4/teams/$teamId',
         queryParameters: {'permanent': permanent.toString()},
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get a team member by user ID
+  Future<MTeamMember> getTeamMember(String teamId, String userId) async {
+    try {
+      final response = await _dio.get('/api/v4/teams/$teamId/members/$userId');
+      return MTeamMember.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
@@ -101,12 +111,11 @@ class MTeamsApi {
 
   /// Add a user to a team
   Future<MTeamMember> addTeamMember(
-    String teamId,
     MAddTeamMemberRequest request,
   ) async {
     try {
       final response = await _dio.post(
-        '/api/v4/teams/$teamId/members',
+        '/api/v4/teams/${request.teamId}/members',
         data: request.toJson(),
       );
       return MTeamMember.fromJson(response.data);

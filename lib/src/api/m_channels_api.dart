@@ -108,6 +108,16 @@ class MChannelsApi {
     }
   }
 
+  /// Get a specific channel member
+  Future<MChannelMember> getChannelMember(String channelId, String userId) async {
+    try {
+      final response = await _dio.get('/api/v4/channels/$channelId/members/$userId');
+      return MChannelMember.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Add a user to a channel
   Future<MChannelMember> addChannelMember(
     String channelId,
@@ -128,6 +138,23 @@ class MChannelsApi {
   Future<void> removeChannelMember(String channelId, String userId) async {
     try {
       await _dio.delete('/api/v4/channels/$channelId/members/$userId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Update channel member notification properties
+  Future<MChannelMember> updateChannelMemberNotifyProps(
+    String channelId,
+    String userId,
+    Map<String, dynamic> notifyProps,
+  ) async {
+    try {
+      final response = await _dio.put(
+        '/api/v4/channels/$channelId/members/$userId/notify_props',
+        data: notifyProps,
+      );
+      return MChannelMember.fromJson(response.data);
     } catch (e) {
       rethrow;
     }

@@ -192,29 +192,32 @@ class MCreateTeamRequest {
 
 /// Update team request
 class MUpdateTeamRequest {
-  final String? name;
+  final String? id;
   final String? displayName;
   final String? description;
   final String? companyName;
   final String? allowedDomains;
+  final String? inviteId;
   final bool? allowOpenInvite;
 
   MUpdateTeamRequest({
-    this.name,
+    this.id,
     this.displayName,
     this.description,
     this.companyName,
     this.allowedDomains,
+    this.inviteId,
     this.allowOpenInvite,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      if (name != null) 'name': name,
+      if (id != null) 'id': id,
       if (displayName != null) 'display_name': displayName,
       if (description != null) 'description': description,
       if (companyName != null) 'company_name': companyName,
       if (allowedDomains != null) 'allowed_domains': allowedDomains,
+      if (inviteId != null) 'invite_id': inviteId,
       if (allowOpenInvite != null) 'allow_open_invite': allowOpenInvite,
     };
   }
@@ -263,8 +266,7 @@ class MTeamSearchRequest {
       if (allowOpenInvite != null) 'allow_open_invite': allowOpenInvite,
       if (page != null) 'page': page,
       if (perPage != null) 'per_page': perPage,
-      if (excludePolicyConstrained != null)
-        'exclude_policy_constrained': excludePolicyConstrained,
+      if (excludePolicyConstrained != null) 'exclude_policy_constrained': excludePolicyConstrained,
     };
   }
 }

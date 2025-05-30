@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mattermost_flutter/mattermost_flutter.dart';
+
+import '../../routes/app_routes.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final MattermostClient client;
-  final MUser currentUser;
-
-  const ProfileScreen({super.key, required this.client, required this.currentUser});
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +16,19 @@ class ProfileScreen extends StatelessWidget {
             radius: 50,
             backgroundColor: Theme.of(context).colorScheme.primary,
             child: Text(
-              currentUser.username.isNotEmpty ? currentUser.username[0].toUpperCase() : '?',
+              AppRoutes.currentUser!.username.isNotEmpty ? AppRoutes.currentUser!.username[0].toUpperCase() : '?',
               style: const TextStyle(fontSize: 40, color: Colors.white),
             ),
           ),
           const SizedBox(height: 16),
-          Text('${currentUser.firstName} ${currentUser.lastName}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(
+            '${AppRoutes.currentUser!.firstName} ${AppRoutes.currentUser!.lastName}',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
-          Text('@${currentUser.username}', style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodySmall?.color)),
+          Text('@${AppRoutes.currentUser!.username}', style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodySmall?.color)),
           const SizedBox(height: 8),
-          Text(currentUser.email, style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodySmall?.color)),
+          Text(AppRoutes.currentUser!.email, style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodySmall?.color)),
           const SizedBox(height: 24),
           const Divider(),
           ListTile(

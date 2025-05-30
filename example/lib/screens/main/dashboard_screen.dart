@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mattermost_example/screens/channels_screen.dart';
-import 'package:mattermost_example/screens/direct_messages_screen.dart';
-import 'package:mattermost_example/screens/login_screen.dart';
-import 'package:mattermost_example/screens/profile_screen.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
-class DashboardScreen extends StatefulWidget {
-  final MattermostClient client;
-  final MUser currentUser;
+import '../../routes/app_routes.dart';
+import '../auth/login_screen.dart';
+import '../direct_messages/direct_messages_screen.dart';
+import '../profile/profile_screen.dart';
+import 'channels_screen.dart';
 
-  const DashboardScreen({super.key, required this.client, required this.currentUser});
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -30,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _setupWebSocket() {
-    widget.client.webSocket.events.listen((event) {
+    AppRoutes.client.webSocket.events.listen((event) {
       // Handle WebSocket events
       if (event['event'] == 'hello') {
         debugPrint('WebSocket connected');
@@ -51,7 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     try {
       // Get teams for the current user
-      _teams = await widget.client.teams.getTeamsForUser(widget.currentUser.id);
+      _teams = await AppRoutes.client.teams.getTeamsForUser(AppRoutes.currentUser!.id);
 
       if (_teams.isNotEmpty) {
         _selectedTeam = _teams.first;
@@ -71,7 +70,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _logout() async {
     try {
-      await widget.client.logout();
+      await AppRoutes.client.logout();
       if (!mounted) return;
 
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
@@ -101,9 +100,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           : _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Channels'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Direct Messages'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          const BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Channels'),
+          const BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Direct Messages'),
+          const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onNavItemTapped,
@@ -117,12 +116,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text('${widget.currentUser.firstName} ${widget.currentUser.lastName}'),
-            accountEmail: Text(widget.currentUser.email),
+            accountName: Text('${AppRoutes.currentUser!.firstName} ${AppRoutes.currentUser!.lastName}'),
+            accountEmail: Text(AppRoutes.currentUser!.email),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
-                widget.currentUser.username.isNotEmpty ? widget.currentUser.username[0].toUpperCase() : '?',
+                AppRoutes.currentUser!.username.isNotEmpty ? AppRoutes.currentUser!.username[0].toUpperCase() : '?',
                 style: const TextStyle(fontSize: 24, color: Colors.white),
               ),
             ),
@@ -167,13 +166,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildBody() {
     switch (_selectedIndex) {
       case 0:
-        return _selectedTeam != null
-            ? ChannelsScreen(client: widget.client, currentUser: widget.currentUser, team: _selectedTeam!)
-            : const Center(child: Text('No team selected'));
+        return _selectedTeam != null ? ChannelsScreen(team: _selectedTeam!) : const Center(child: Text('No team selected'));
       case 1:
-        return DirectMessagesScreen(client: widget.client, currentUser: widget.currentUser);
+        return const DirectMessagesScreen();
       case 2:
-        return ProfileScreen(client: widget.client, currentUser: widget.currentUser);
+        return const ProfileScreen();
       default:
         return const Center(child: Text('Unknown screen'));
     }
