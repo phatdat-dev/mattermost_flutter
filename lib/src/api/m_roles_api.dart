@@ -49,11 +49,21 @@ class MRolesApi {
   }
 
   /// Patch a role
-  Future<MRole> patchRole(String roleId, MPatchRoleRequest request) async {
+  Future<MRole> patchRole(
+    String roleId, {
+    String? displayName,
+    String? description,
+    List<String>? permissions,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (displayName != null) data['display_name'] = displayName;
+      if (description != null) data['description'] = description;
+      if (permissions != null) data['permissions'] = permissions;
+
       final response = await _dio.put(
         '/api/v4/roles/$roleId/patch',
-        data: request.toJson(),
+        data: data,
       );
       return MRole.fromJson(response.data);
     } catch (e) {

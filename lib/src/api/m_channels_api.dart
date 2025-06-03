@@ -9,11 +9,25 @@ class MChannelsApi {
   MChannelsApi(this._dio);
 
   /// Create a new channel
-  Future<MChannel> createChannel(MCreateChannelRequest request) async {
+  Future<MChannel> createChannel({
+    required String teamId,
+    required String name,
+    required String displayName,
+    String purpose = '',
+    String header = '',
+    required String type,
+  }) async {
     try {
       final response = await _dio.post(
         '/api/v4/channels',
-        data: request.toJson(),
+        data: {
+          'team_id': teamId,
+          'name': name,
+          'display_name': displayName,
+          'purpose': purpose,
+          'header': header,
+          'type': type,
+        },
       );
       return MChannel.fromJson(response.data);
     } catch (e) {
@@ -33,13 +47,22 @@ class MChannelsApi {
 
   /// Update a channel
   Future<MChannel> updateChannel(
-    String channelId,
-    MUpdateChannelRequest request,
-  ) async {
+    String channelId, {
+    String? name,
+    String? displayName,
+    String? purpose,
+    String? header,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (name != null) data['name'] = name;
+      if (displayName != null) data['display_name'] = displayName;
+      if (purpose != null) data['purpose'] = purpose;
+      if (header != null) data['header'] = header;
+
       final response = await _dio.put(
         '/api/v4/channels/$channelId',
-        data: request.toJson(),
+        data: data,
       );
       return MChannel.fromJson(response.data);
     } catch (e) {
@@ -108,15 +131,31 @@ class MChannelsApi {
     }
   }
 
+  /// Get a specific channel member
+  Future<MChannelMember> getChannelMember(String channelId, String userId) async {
+    try {
+      final response = await _dio.get('/api/v4/channels/$channelId/members/$userId');
+      return MChannelMember.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Add a user to a channel
   Future<MChannelMember> addChannelMember(
-    String channelId,
-    MAddChannelMemberRequest request,
-  ) async {
+    String channelId, {
+    required String userId,
+    String? postRootId,
+  }) async {
     try {
+      final data = <String, dynamic>{
+        'user_id': userId,
+      };
+      if (postRootId != null) data['post_root_id'] = postRootId;
+
       final response = await _dio.post(
         '/api/v4/channels/$channelId/members',
-        data: request.toJson(),
+        data: data,
       );
       return MChannelMember.fromJson(response.data);
     } catch (e) {
@@ -128,6 +167,23 @@ class MChannelsApi {
   Future<void> removeChannelMember(String channelId, String userId) async {
     try {
       await _dio.delete('/api/v4/channels/$channelId/members/$userId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Update channel member notification properties
+  Future<MChannelMember> updateChannelMemberNotifyProps(
+    String channelId,
+    String userId,
+    MChannelNotifyProps notifyProps,
+  ) async {
+    try {
+      final response = await _dio.put(
+        '/api/v4/channels/$channelId/members/$userId/notify_props',
+        data: notifyProps.toJson(),
+      );
+      return MChannelMember.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
@@ -180,13 +236,34 @@ class MChannelsApi {
 
   /// Search channels
   Future<List<MChannel>> searchChannels(
-    String teamId,
-    MChannelSearchRequest request,
-  ) async {
+    String teamId, {
+    String? term,
+    bool? notAssociatedToGroup,
+    String? groupConstrained,
+    bool? excludeDefaultChannels,
+    bool? includeDeleted,
+    bool? excludePolicyConstrained,
+    bool? publicChannels,
+    bool? privateChannels,
+    int? page,
+    int? perPage,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (term != null) data['term'] = term;
+      if (notAssociatedToGroup != null) data['not_associated_to_group'] = notAssociatedToGroup;
+      if (groupConstrained != null) data['group_constrained'] = groupConstrained;
+      if (excludeDefaultChannels != null) data['exclude_default_channels'] = excludeDefaultChannels;
+      if (includeDeleted != null) data['include_deleted'] = includeDeleted;
+      if (excludePolicyConstrained != null) data['exclude_policy_constrained'] = excludePolicyConstrained;
+      if (publicChannels != null) data['public'] = publicChannels;
+      if (privateChannels != null) data['private'] = privateChannels;
+      if (page != null) data['page'] = page;
+      if (perPage != null) data['per_page'] = perPage;
+
       final response = await _dio.post(
         '/api/v4/teams/$teamId/channels/search',
-        data: request.toJson(),
+        data: data,
       );
       return (response.data as List).map((channelData) => MChannel.fromJson(channelData)).toList();
     } catch (e) {

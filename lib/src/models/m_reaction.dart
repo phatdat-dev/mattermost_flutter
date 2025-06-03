@@ -30,20 +30,3 @@ class MReaction {
     };
   }
 }
-
-/// Reaction request model
-class MReactionRequest {
-  final String userId;
-  final String postId;
-  final String emojiName;
-
-  MReactionRequest({
-    required this.userId,
-    required this.postId,
-    required this.emojiName,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {'user_id': userId, 'post_id': postId, 'emoji_name': emojiName};
-  }
-}

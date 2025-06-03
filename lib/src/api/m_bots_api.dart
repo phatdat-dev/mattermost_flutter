@@ -9,9 +9,20 @@ class MBotsApi {
   MBotsApi(this._dio);
 
   /// Create a bot
-  Future<MBot> createBot(MCreateBotRequest request) async {
+  Future<MBot> createBot({
+    required String username,
+    required String displayName,
+    required String description,
+  }) async {
     try {
-      final response = await _dio.post('/api/v4/bots', data: request.toJson());
+      final response = await _dio.post(
+        '/api/v4/bots',
+        data: {
+          'username': username,
+          'display_name': displayName,
+          'description': description,
+        },
+      );
       return MBot.fromJson(response.data);
     } catch (e) {
       rethrow;

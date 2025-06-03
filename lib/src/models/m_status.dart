@@ -31,18 +31,6 @@ class MUserStatus {
   }
 }
 
-/// Update user status request
-class MUpdateUserStatusRequest {
-  final String userId;
-  final String status;
-
-  MUpdateUserStatusRequest({required this.userId, required this.status});
-
-  Map<String, dynamic> toJson() {
-    return {'user_id': userId, 'status': status};
-  }
-}
-
 /// System status model
 class MSystemStatus {
   final String androidLatestVersion;

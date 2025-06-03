@@ -33,11 +33,31 @@ class MSchemesApi {
   }
 
   /// Create a scheme
-  Future<MScheme> createScheme(MCreateSchemeRequest request) async {
+  Future<MScheme> createScheme({
+    required String name,
+    required String displayName,
+    required String description,
+    required String scope,
+    String? defaultTeamAdminRole,
+    String? defaultTeamUserRole,
+    String? defaultChannelAdminRole,
+    String? defaultChannelUserRole,
+  }) async {
     try {
+      final data = {
+        'name': name,
+        'display_name': displayName,
+        'description': description,
+        'scope': scope,
+        if (defaultTeamAdminRole != null) 'default_team_admin_role': defaultTeamAdminRole,
+        if (defaultTeamUserRole != null) 'default_team_user_role': defaultTeamUserRole,
+        if (defaultChannelAdminRole != null) 'default_channel_admin_role': defaultChannelAdminRole,
+        if (defaultChannelUserRole != null) 'default_channel_user_role': defaultChannelUserRole,
+      };
+
       final response = await _dio.post(
         '/api/v4/schemes',
-        data: request.toJson(),
+        data: data,
       );
       return MScheme.fromJson(response.data);
     } catch (e) {
@@ -66,13 +86,26 @@ class MSchemesApi {
 
   /// Patch a scheme
   Future<MScheme> patchScheme(
-    String schemeId,
-    MPatchSchemeRequest request,
-  ) async {
+    String schemeId, {
+    String? displayName,
+    String? description,
+    String? defaultTeamAdminRole,
+    String? defaultTeamUserRole,
+    String? defaultChannelAdminRole,
+    String? defaultChannelUserRole,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (displayName != null) data['display_name'] = displayName;
+      if (description != null) data['description'] = description;
+      if (defaultTeamAdminRole != null) data['default_team_admin_role'] = defaultTeamAdminRole;
+      if (defaultTeamUserRole != null) data['default_team_user_role'] = defaultTeamUserRole;
+      if (defaultChannelAdminRole != null) data['default_channel_admin_role'] = defaultChannelAdminRole;
+      if (defaultChannelUserRole != null) data['default_channel_user_role'] = defaultChannelUserRole;
+
       final response = await _dio.put(
         '/api/v4/schemes/$schemeId/patch',
-        data: request.toJson(),
+        data: data,
       );
       return MScheme.fromJson(response.data);
     } catch (e) {

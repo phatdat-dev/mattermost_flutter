@@ -39,13 +39,20 @@ class MCloudApi {
   }
 
   /// Update cloud customer
-  Future<MCloudCustomer> updateCustomer(
-    MUpdateCloudCustomerRequest request,
-  ) async {
+  Future<MCloudCustomer> updateCustomer({
+    String? name,
+    String? email,
+    MCloudCustomerAddress? billingAddress,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (name != null) data['name'] = name;
+      if (email != null) data['email'] = email;
+      if (billingAddress != null) data['billing_address'] = billingAddress.toJson();
+
       final response = await _dio.put(
         '/api/v4/cloud/customer',
-        data: request.toJson(),
+        data: data,
       );
       return MCloudCustomer.fromJson(response.data);
     } catch (e) {
@@ -76,23 +83,25 @@ class MCloudApi {
     }
   }
 
-  /// Create customer payment method
-  Future<void> createCustomerPaymentMethod(
-    MCreatePaymentMethodRequest request,
-  ) async {
+  /// Create customer setup payment intent
+  Future<MPaymentSetupIntent> createCustomerPayment() async {
     try {
-      await _dio.post('/api/v4/cloud/payment', data: request.toJson());
+      final response = await _dio.post('/api/v4/cloud/payment');
+      return MPaymentSetupIntent.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Confirm payment method
-  Future<void> confirmPaymentMethod(
-    MConfirmPaymentMethodRequest request,
-  ) async {
+  /// Complete the payment setup intent
+  Future<void> confirmCustomerPayment({
+    required String stripeSetupIntentId,
+  }) async {
     try {
-      await _dio.post('/api/v4/cloud/payment/confirm', data: request.toJson());
+      final data = FormData.fromMap({
+        'stripe_setup_intent_id': stripeSetupIntentId,
+      });
+      await _dio.post('/api/v4/cloud/payment/confirm', data: data);
     } catch (e) {
       rethrow;
     }

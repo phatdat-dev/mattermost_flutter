@@ -1,3 +1,5 @@
+import '../../mattermost_flutter.dart';
+
 /// Session model
 class MSession {
   final String id;
@@ -10,6 +12,7 @@ class MSession {
   final String? roles;
   final bool? isOAuth;
   final Map<String, dynamic>? props;
+  final MTeamMember? teamMember;
 
   MSession({
     required this.id,
@@ -22,6 +25,7 @@ class MSession {
     this.roles,
     this.isOAuth,
     this.props,
+    this.teamMember,
   });
 
   factory MSession.fromJson(Map<String, dynamic> json) {
@@ -36,6 +40,7 @@ class MSession {
       roles: json['roles'],
       isOAuth: json['is_oauth'],
       props: json['props'],
+      teamMember: json['team_member'] != null ? MTeamMember.fromJson(json['team_member']) : null,
     );
   }
 
@@ -51,6 +56,7 @@ class MSession {
       if (roles != null) 'roles': roles,
       if (isOAuth != null) 'is_oauth': isOAuth,
       if (props != null) 'props': props,
+      if (teamMember != null) 'team_member': teamMember,
     };
   }
 }

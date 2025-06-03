@@ -45,13 +45,29 @@ class MSharedChannelsApi {
   }
 
   /// Create a remote cluster invitation
-  Future<MRemoteClusterInvite> createRemoteClusterInvite(
-    MCreateRemoteClusterInviteRequest request,
-  ) async {
+  Future<MRemoteClusterInvite> createRemoteClusterInvite({
+    required String remoteId,
+    required String remoteTeamId,
+    required String name,
+    required String displayName,
+    required String siteUrl,
+    int? expiresAt,
+    String? shareToken,
+  }) async {
     try {
+      final data = {
+        'remote_id': remoteId,
+        'remote_team_id': remoteTeamId,
+        'name': name,
+        'display_name': displayName,
+        'site_url': siteUrl,
+        if (expiresAt != null) 'expires_at': expiresAt,
+        if (shareToken != null) 'share_token': shareToken,
+      };
+
       final response = await _dio.post(
         '/api/v4/sharedchannels/remote_clusters/invite',
-        data: request.toJson(),
+        data: data,
       );
       return MRemoteClusterInvite.fromJson(response.data);
     } catch (e) {

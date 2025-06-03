@@ -23,9 +23,7 @@ class MCloudProduct {
       description: json['description'] ?? '',
       price: json['price'] ?? 0.0,
       pricePerSeat: json['price_per_seat'] ?? '',
-      features: json['features'] != null
-          ? (json['features'] as List).cast<String>()
-          : null,
+      features: json['features'] != null ? (json['features'] as List).cast<String>() : null,
     );
   }
 
@@ -113,12 +111,8 @@ class MCloudCustomer {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      billingAddress: json['billing_address'] != null
-          ? MCloudCustomerAddress.fromJson(json['billing_address'])
-          : null,
-      paymentMethod: json['payment_method'] != null
-          ? MCloudCustomerPaymentMethod.fromJson(json['payment_method'])
-          : null,
+      billingAddress: json['billing_address'] != null ? MCloudCustomerAddress.fromJson(json['billing_address']) : null,
+      paymentMethod: json['payment_method'] != null ? MCloudCustomerPaymentMethod.fromJson(json['payment_method']) : null,
       createAt: json['create_at'],
     );
   }
@@ -270,41 +264,27 @@ class MInvoice {
   }
 }
 
-/// Update cloud customer request
-class MUpdateCloudCustomerRequest {
-  final String? name;
-  final String? email;
-  final MCloudCustomerAddress? billingAddress;
+/// Payment setup intent model
+class MPaymentSetupIntent {
+  final String id;
+  final String? clientSecret;
 
-  MUpdateCloudCustomerRequest({this.name, this.email, this.billingAddress});
+  MPaymentSetupIntent({
+    required this.id,
+    this.clientSecret,
+  });
+
+  factory MPaymentSetupIntent.fromJson(Map<String, dynamic> json) {
+    return MPaymentSetupIntent(
+      id: json['id'] ?? '',
+      clientSecret: json['client_secret'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
-      if (name != null) 'name': name,
-      if (email != null) 'email': email,
-      if (billingAddress != null) 'billing_address': billingAddress!.toJson(),
+      'id': id,
+      if (clientSecret != null) 'client_secret': clientSecret,
     };
-  }
-}
-
-/// Create payment method request
-class MCreatePaymentMethodRequest {
-  final String stripeSetupIntent;
-
-  MCreatePaymentMethodRequest({required this.stripeSetupIntent});
-
-  Map<String, dynamic> toJson() {
-    return {'stripe_setup_intent': stripeSetupIntent};
-  }
-}
-
-/// Confirm payment method request
-class MConfirmPaymentMethodRequest {
-  final String stripeSetupIntentId;
-
-  MConfirmPaymentMethodRequest({required this.stripeSetupIntentId});
-
-  Map<String, dynamic> toJson() {
-    return {'stripe_setup_intent_id': stripeSetupIntentId};
   }
 }

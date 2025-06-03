@@ -1,3 +1,4 @@
+import 'm_notify_props.dart';
 import 'm_time_zone.dart';
 
 /// User model
@@ -10,7 +11,7 @@ class MUser {
   final String nickname;
   final String position;
   final Map<String, dynamic>? props;
-  final Map<String, dynamic>? notifyProps;
+  final MUserNotifyProps? notifyProps;
   final int? lastPasswordUpdate;
   final int? lastPictureUpdate;
   final int? failedAttempts;
@@ -93,132 +94,6 @@ class MUser {
       if (isBot != null) 'is_bot': isBot,
       if (botDescription != null) 'bot_description': botDescription,
       if (botOwnerId != null) 'bot_owner_id': botOwnerId,
-    };
-  }
-}
-
-/// Create user request
-class MCreateUserRequest {
-  final String email;
-  final String username;
-  final String password;
-  final String? firstName;
-  final String? lastName;
-  final String? nickname;
-  final String? position;
-  final Map<String, dynamic>? props;
-  final Map<String, dynamic>? notifyProps;
-  final String? locale;
-  final MTimeZone? timezone;
-
-  MCreateUserRequest({
-    required this.email,
-    required this.username,
-    required this.password,
-    this.firstName,
-    this.lastName,
-    this.nickname,
-    this.position,
-    this.props,
-    this.notifyProps,
-    this.locale,
-    this.timezone,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'username': username,
-      'password': password,
-      if (firstName != null) 'first_name': firstName,
-      if (lastName != null) 'last_name': lastName,
-      if (nickname != null) 'nickname': nickname,
-      if (position != null) 'position': position,
-      if (props != null) 'props': props,
-      if (notifyProps != null) 'notify_props': notifyProps,
-      if (locale != null) 'locale': locale,
-      if (timezone != null) 'timezone': timezone?.toJson(),
-    };
-  }
-}
-
-/// Update user request
-class MUpdateUserRequest {
-  final String? email;
-  final String? username;
-  final String? firstName;
-  final String? lastName;
-  final String? nickname;
-  final String? position;
-  final Map<String, dynamic>? props;
-  final Map<String, dynamic>? notifyProps;
-  final String? locale;
-  final MTimeZone? timezone;
-
-  MUpdateUserRequest({
-    this.email,
-    this.username,
-    this.firstName,
-    this.lastName,
-    this.nickname,
-    this.position,
-    this.props,
-    this.notifyProps,
-    this.locale,
-    this.timezone,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (email != null) 'email': email,
-      if (username != null) 'username': username,
-      if (firstName != null) 'first_name': firstName,
-      if (lastName != null) 'last_name': lastName,
-      if (nickname != null) 'nickname': nickname,
-      if (position != null) 'position': position,
-      if (props != null) 'props': props,
-      if (notifyProps != null) 'notify_props': notifyProps,
-      if (locale != null) 'locale': locale,
-      if (timezone != null) 'timezone': timezone?.toJson(),
-    };
-  }
-}
-
-/// User search request
-class MUserSearchRequest {
-  final String? term;
-  final String? teamId;
-  final String? notInTeamId;
-  final String? inChannelId;
-  final String? notInChannelId;
-  final String? groupConstrained;
-  final bool? allowInactive;
-  final bool? withoutTeam;
-  final int? limit;
-
-  MUserSearchRequest({
-    this.term,
-    this.teamId,
-    this.notInTeamId,
-    this.inChannelId,
-    this.notInChannelId,
-    this.groupConstrained,
-    this.allowInactive,
-    this.withoutTeam,
-    this.limit,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (term != null) 'term': term,
-      if (teamId != null) 'team_id': teamId,
-      if (notInTeamId != null) 'not_in_team_id': notInTeamId,
-      if (inChannelId != null) 'in_channel_id': inChannelId,
-      if (notInChannelId != null) 'not_in_channel_id': notInChannelId,
-      if (groupConstrained != null) 'group_constrained': groupConstrained,
-      if (allowInactive != null) 'allow_inactive': allowInactive,
-      if (withoutTeam != null) 'without_team': withoutTeam,
-      if (limit != null) 'limit': limit,
     };
   }
 }

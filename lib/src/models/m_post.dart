@@ -1,3 +1,5 @@
+import 'm_meta_data.dart';
+
 /// Post model
 class MPost {
   final String id;
@@ -8,13 +10,15 @@ class MPost {
   final int? createAt;
   final int? updateAt;
   final int? deleteAt;
+  final int? editAt;
   final bool? isPinned;
   final String? rootId;
   final String? parentId;
   final String? originalId;
   final Map<String, dynamic>? props;
-  final Map<String, dynamic>? metadata;
+  final MMetaData? metadata;
   final List<String>? fileIds;
+  final String? hashtag;
 
   MPost({
     required this.id,
@@ -25,6 +29,7 @@ class MPost {
     this.createAt,
     this.updateAt,
     this.deleteAt,
+    this.editAt,
     this.isPinned,
     this.rootId,
     this.parentId,
@@ -32,6 +37,7 @@ class MPost {
     this.props,
     this.metadata,
     this.fileIds,
+    this.hashtag,
   });
 
   factory MPost.fromJson(Map<String, dynamic> json) {
@@ -44,13 +50,15 @@ class MPost {
       createAt: json['create_at'],
       updateAt: json['update_at'],
       deleteAt: json['delete_at'],
+      editAt: json['edit_at'], // Field mới
       isPinned: json['is_pinned'],
       rootId: json['root_id'],
       parentId: json['parent_id'],
       originalId: json['original_id'],
       props: json['props'],
-      metadata: json['metadata'],
+      metadata: json['metadata'] != null ? MMetaData.fromJson(json['metadata'] as Map<String, dynamic>) : null,
       fileIds: (json['file_ids'] as List?)?.map((e) => e.toString()).toList(),
+      hashtag: json['hashtag'],
     );
   }
 
@@ -64,13 +72,15 @@ class MPost {
       if (createAt != null) 'create_at': createAt,
       if (updateAt != null) 'update_at': updateAt,
       if (deleteAt != null) 'delete_at': deleteAt,
+      if (editAt != null) 'edit_at': editAt, // Field mới
       if (isPinned != null) 'is_pinned': isPinned,
       if (rootId != null) 'root_id': rootId,
       if (parentId != null) 'parent_id': parentId,
       if (originalId != null) 'original_id': originalId,
       if (props != null) 'props': props,
-      if (metadata != null) 'metadata': metadata,
+      if (metadata != null) 'metadata': metadata?.toJson(),
       if (fileIds != null) 'file_ids': fileIds,
+      if (hashtag != null) 'hashtag': hashtag,
     };
   }
 }
@@ -120,88 +130,6 @@ class MPostList {
       if (nextPostId != null) 'next_post_id': nextPostId,
       if (prevPostId != null) 'prev_post_id': prevPostId,
       if (hasNext != null) 'has_next': hasNext,
-    };
-  }
-}
-
-/// Create post request
-class MCreatePostRequest {
-  final String channelId;
-  final String message;
-  final String? rootId;
-  final String? fileIds;
-  final Map<String, dynamic>? props;
-
-  MCreatePostRequest({
-    required this.channelId,
-    required this.message,
-    this.rootId,
-    this.fileIds,
-    this.props,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'channel_id': channelId,
-      'message': message,
-      if (rootId != null) 'root_id': rootId,
-      if (fileIds != null) 'file_ids': fileIds,
-      if (props != null) 'props': props,
-    };
-  }
-}
-
-/// Update post request
-class MUpdatePostRequest {
-  final String id;
-  final String message;
-  final bool? isPinned;
-  final Map<String, dynamic>? props;
-
-  MUpdatePostRequest({
-    required this.id,
-    required this.message,
-    this.isPinned,
-    this.props,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'message': message,
-      if (isPinned != null) 'is_pinned': isPinned,
-      if (props != null) 'props': props,
-    };
-  }
-}
-
-/// Post search request
-class MPostSearchRequest {
-  final String terms;
-  final bool? isOrSearch;
-  final int? timeZoneOffset;
-  final bool? includeDeletedChannels;
-  final int? page;
-  final int? perPage;
-
-  MPostSearchRequest({
-    required this.terms,
-    this.isOrSearch,
-    this.timeZoneOffset,
-    this.includeDeletedChannels,
-    this.page,
-    this.perPage,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'terms': terms,
-      if (isOrSearch != null) 'is_or_search': isOrSearch,
-      if (timeZoneOffset != null) 'time_zone_offset': timeZoneOffset,
-      if (includeDeletedChannels != null)
-        'include_deleted_channels': includeDeletedChannels,
-      if (page != null) 'page': page,
-      if (perPage != null) 'per_page': perPage,
     };
   }
 }

@@ -42,15 +42,3 @@ class MJob {
     };
   }
 }
-
-/// Create job request
-class MCreateJobRequest {
-  final String type;
-  final Map<String, dynamic>? data;
-
-  MCreateJobRequest({required this.type, this.data});
-
-  Map<String, dynamic> toJson() {
-    return {'type': type, if (data != null) 'data': data};
-  }
-}

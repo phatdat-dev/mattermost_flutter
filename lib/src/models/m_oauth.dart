@@ -1,15 +1,36 @@
 /// OAuth app model
 class MOAuthApp {
+  /// The OAuth application id
   final String id;
+
+  /// The OAuth application client id
   final String clientId;
+
+  /// The OAuth application client secret
   final String clientSecret;
+
+  /// The name of the OAuth application
   final String name;
+
+  /// The description of the OAuth application
   final String description;
+
+  /// A URL to an icon to display with the application
   final String iconUrl;
-  final String callbackUrls;
+
+  /// A list of callback URLs for the application
+  final List<String> callbackUrls;
+
+  /// A link to information about the client application
   final String homepage;
+
+  /// Set the application as trusted. Trusted applications do not require user consent
   final bool isTrusted;
+
+  /// The time of creation of the OAuth application in milliseconds since the Unix epoch
   final int? createAt;
+
+  /// The time of the last update of the OAuth application in milliseconds since the Unix epoch
   final int? updateAt;
 
   MOAuthApp({
@@ -34,7 +55,11 @@ class MOAuthApp {
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       iconUrl: json['icon_url'] ?? '',
-      callbackUrls: json['callback_urls'] ?? '',
+      callbackUrls: json['callback_urls'] is List
+          ? List<String>.from(json['callback_urls'])
+          : json['callback_urls'] != null
+          ? [json['callback_urls'].toString()]
+          : <String>[],
       homepage: json['homepage'] ?? '',
       isTrusted: json['is_trusted'] ?? false,
       createAt: json['create_at'],
@@ -59,55 +84,40 @@ class MOAuthApp {
   }
 }
 
-/// Register OAuth app request
-class MRegisterOAuthAppRequest {
-  final String name;
-  final String description;
-  final String iconUrl;
-  final List<String> callbackUrls;
-  final String homepage;
-  final bool? isTrusted;
-
-  MRegisterOAuthAppRequest({
-    required this.name,
-    required this.description,
-    required this.iconUrl,
-    required this.callbackUrls,
-    required this.homepage,
-    this.isTrusted,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'description': description,
-      'icon_url': iconUrl,
-      'callback_urls': callbackUrls,
-      'homepage': homepage,
-      if (isTrusted != null) 'is_trusted': isTrusted,
-    };
-  }
-}
-
-/// Update OAuth app request
-class MUpdateOAuthAppRequest {
+/// Public OAuth app info model (limited information for public endpoint)
+class MOAuthAppInfo {
+  /// The OAuth application id
   final String id;
-  final String name;
-  final String description;
-  final String iconUrl;
-  final List<String> callbackUrls;
-  final String homepage;
-  final bool? isTrusted;
 
-  MUpdateOAuthAppRequest({
+  /// The name of the OAuth application
+  final String name;
+
+  /// The description of the OAuth application
+  final String description;
+
+  /// A URL to an icon to display with the application
+  final String iconUrl;
+
+  /// A link to information about the client application
+  final String homepage;
+
+  MOAuthAppInfo({
     required this.id,
     required this.name,
     required this.description,
     required this.iconUrl,
-    required this.callbackUrls,
     required this.homepage,
-    this.isTrusted,
   });
+
+  factory MOAuthAppInfo.fromJson(Map<String, dynamic> json) {
+    return MOAuthAppInfo(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      iconUrl: json['icon_url'] ?? '',
+      homepage: json['homepage'] ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -115,9 +125,7 @@ class MUpdateOAuthAppRequest {
       'name': name,
       'description': description,
       'icon_url': iconUrl,
-      'callback_urls': callbackUrls,
       'homepage': homepage,
-      if (isTrusted != null) 'is_trusted': isTrusted,
     };
   }
 }

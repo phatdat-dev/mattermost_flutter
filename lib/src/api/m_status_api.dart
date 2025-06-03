@@ -43,13 +43,19 @@ class MStatusApi {
 
   /// Update user status
   Future<MUserStatus> updateUserStatus(
-    String userId,
-    MUpdateUserStatusRequest request,
-  ) async {
+    String userId, {
+    required String status,
+    bool? manual,
+  }) async {
     try {
+      final data = {
+        'status': status,
+        if (manual != null) 'manual': manual,
+      };
+
       final response = await _dio.put(
         '/api/v4/users/$userId/status',
-        data: request.toJson(),
+        data: data,
       );
       return MUserStatus.fromJson(response.data);
     } catch (e) {

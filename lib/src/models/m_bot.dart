@@ -46,24 +46,3 @@ class MBot {
     };
   }
 }
-
-/// Create bot request
-class MCreateBotRequest {
-  final String username;
-  final String displayName;
-  final String description;
-
-  MCreateBotRequest({
-    required this.username,
-    required this.displayName,
-    required this.description,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'username': username,
-      'display_name': displayName,
-      'description': description,
-    };
-  }
-}

@@ -9,13 +9,25 @@ class MWebhooksApi {
   MWebhooksApi(this._dio);
 
   /// Create an incoming webhook
-  Future<MIncomingWebhook> createIncomingWebhook(
-    MCreateIncomingWebhookRequest request,
-  ) async {
+  Future<MIncomingWebhook> createIncomingWebhook({
+    required String channelId,
+    required String displayName,
+    String? description,
+    String? username,
+    String? iconUrl,
+  }) async {
     try {
+      final data = {
+        'channel_id': channelId,
+        'display_name': displayName,
+        if (description != null) 'description': description,
+        if (username != null) 'username': username,
+        if (iconUrl != null) 'icon_url': iconUrl,
+      };
+
       final response = await _dio.post(
         '/api/v4/hooks/incoming',
-        data: request.toJson(),
+        data: data,
       );
       return MIncomingWebhook.fromJson(response.data);
     } catch (e) {
@@ -59,13 +71,24 @@ class MWebhooksApi {
 
   /// Update an incoming webhook
   Future<MIncomingWebhook> updateIncomingWebhook(
-    String hookId,
-    MUpdateIncomingWebhookRequest request,
-  ) async {
+    String hookId, {
+    String? channelId,
+    String? displayName,
+    String? description,
+    String? username,
+    String? iconUrl,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (channelId != null) data['channel_id'] = channelId;
+      if (displayName != null) data['display_name'] = displayName;
+      if (description != null) data['description'] = description;
+      if (username != null) data['username'] = username;
+      if (iconUrl != null) data['icon_url'] = iconUrl;
+
       final response = await _dio.put(
         '/api/v4/hooks/incoming/$hookId',
-        data: request.toJson(),
+        data: data,
       );
       return MIncomingWebhook.fromJson(response.data);
     } catch (e) {
@@ -83,13 +106,31 @@ class MWebhooksApi {
   }
 
   /// Create an outgoing webhook
-  Future<MOutgoingWebhook> createOutgoingWebhook(
-    MCreateOutgoingWebhookRequest request,
-  ) async {
+  Future<MOutgoingWebhook> createOutgoingWebhook({
+    required String channelId,
+    required String teamId,
+    required String displayName,
+    required String triggerWords,
+    required String callbackUrls,
+    String? description,
+    String? triggerWhen,
+    String? contentType,
+  }) async {
     try {
+      final data = {
+        'channel_id': channelId,
+        'team_id': teamId,
+        'display_name': displayName,
+        'trigger_words': triggerWords,
+        'callback_urls': callbackUrls,
+        if (description != null) 'description': description,
+        if (triggerWhen != null) 'trigger_when': triggerWhen,
+        if (contentType != null) 'content_type': contentType,
+      };
+
       final response = await _dio.post(
         '/api/v4/hooks/outgoing',
-        data: request.toJson(),
+        data: data,
       );
       return MOutgoingWebhook.fromJson(response.data);
     } catch (e) {
@@ -135,13 +176,28 @@ class MWebhooksApi {
 
   /// Update an outgoing webhook
   Future<MOutgoingWebhook> updateOutgoingWebhook(
-    String hookId,
-    MUpdateOutgoingWebhookRequest request,
-  ) async {
+    String hookId, {
+    String? channelId,
+    String? displayName,
+    String? description,
+    String? triggerWords,
+    String? triggerWhen,
+    String? callbackUrls,
+    String? contentType,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (channelId != null) data['channel_id'] = channelId;
+      if (displayName != null) data['display_name'] = displayName;
+      if (description != null) data['description'] = description;
+      if (triggerWords != null) data['trigger_words'] = triggerWords;
+      if (triggerWhen != null) data['trigger_when'] = triggerWhen;
+      if (callbackUrls != null) data['callback_urls'] = callbackUrls;
+      if (contentType != null) data['content_type'] = contentType;
+
       final response = await _dio.put(
         '/api/v4/hooks/outgoing/$hookId',
-        data: request.toJson(),
+        data: data,
       );
       return MOutgoingWebhook.fromJson(response.data);
     } catch (e) {

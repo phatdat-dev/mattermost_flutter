@@ -89,11 +89,19 @@ class MEmojisApi {
   }
 
   /// Search custom emojis
-  Future<List<MEmoji>> searchCustomEmojis(MEmojiSearchRequest request) async {
+  Future<List<MEmoji>> searchCustomEmojis({
+    required String term,
+    String? prefixOnly,
+  }) async {
     try {
+      final data = {
+        'term': term,
+        if (prefixOnly != null) 'prefix_only': prefixOnly,
+      };
+
       final response = await _dio.post(
         '/api/v4/emoji/search',
-        data: request.toJson(),
+        data: data,
       );
       return (response.data as List).map((emojiData) => MEmoji.fromJson(emojiData)).toList();
     } catch (e) {

@@ -54,14 +54,3 @@ class MRole {
     };
   }
 }
-
-/// Patch role request
-class MPatchRoleRequest {
-  final List<String>? permissions;
-
-  MPatchRoleRequest({this.permissions});
-
-  Map<String, dynamic> toJson() {
-    return {if (permissions != null) 'permissions': permissions};
-  }
-}

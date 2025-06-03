@@ -1,3 +1,5 @@
+import 'm_notify_props.dart';
+
 /// Channel model
 class MChannel {
   final String id;
@@ -87,10 +89,10 @@ class MChannelMember {
   final int? lastViewedAt;
   final int? msgCount;
   final int? mentionCount;
-  final Map<String, dynamic>? notifyProps;
+  final MChannelNotifyProps? notifyProps;
   final int? lastUpdateAt;
-  final String? schemeUser;
-  final String? schemeAdmin;
+  final bool? schemeUser;
+  final bool? schemeAdmin;
   final String? explicitRoles;
 
   MChannelMember({
@@ -131,7 +133,7 @@ class MChannelMember {
       if (lastViewedAt != null) 'last_viewed_at': lastViewedAt,
       if (msgCount != null) 'msg_count': msgCount,
       if (mentionCount != null) 'mention_count': mentionCount,
-      if (notifyProps != null) 'notify_props': notifyProps,
+      if (notifyProps != null) 'notify_props': notifyProps?.toJson(),
       if (lastUpdateAt != null) 'last_update_at': lastUpdateAt,
       if (schemeUser != null) 'scheme_user': schemeUser,
       if (schemeAdmin != null) 'scheme_admin': schemeAdmin,
@@ -169,120 +171,6 @@ class MChannelStats {
       'member_count': memberCount,
       'guest_count': guestCount,
       'pinnedpost_count': pinnedPostCount,
-    };
-  }
-}
-
-/// Create channel request
-class MCreateChannelRequest {
-  final String teamId;
-  final String name;
-  final String displayName;
-  final String purpose;
-  final String header;
-  final String type;
-
-  MCreateChannelRequest({
-    required this.teamId,
-    required this.name,
-    required this.displayName,
-    this.purpose = '',
-    this.header = '',
-    required this.type,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'team_id': teamId,
-      'name': name,
-      'display_name': displayName,
-      'purpose': purpose,
-      'header': header,
-      'type': type,
-    };
-  }
-}
-
-/// Update channel request
-class MUpdateChannelRequest {
-  final String? name;
-  final String? displayName;
-  final String? purpose;
-  final String? header;
-
-  MUpdateChannelRequest({
-    this.name,
-    this.displayName,
-    this.purpose,
-    this.header,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (name != null) 'name': name,
-      if (displayName != null) 'display_name': displayName,
-      if (purpose != null) 'purpose': purpose,
-      if (header != null) 'header': header,
-    };
-  }
-}
-
-/// Add channel member request
-class MAddChannelMemberRequest {
-  final String userId;
-  final String? postRootId;
-
-  MAddChannelMemberRequest({required this.userId, this.postRootId});
-
-  Map<String, dynamic> toJson() {
-    return {
-      'user_id': userId,
-      if (postRootId != null) 'post_root_id': postRootId,
-    };
-  }
-}
-
-/// Channel search request
-class MChannelSearchRequest {
-  final String? term;
-  final bool? notAssociatedToGroup;
-  final String? groupConstrained;
-  final bool? excludeDefaultChannels;
-  final bool? includeDeleted;
-  final bool? excludePolicyConstrained;
-  final bool? publicChannels;
-  final bool? privateChannels;
-  final int? page;
-  final int? perPage;
-
-  MChannelSearchRequest({
-    this.term,
-    this.notAssociatedToGroup,
-    this.groupConstrained,
-    this.excludeDefaultChannels,
-    this.includeDeleted,
-    this.excludePolicyConstrained,
-    this.publicChannels,
-    this.privateChannels,
-    this.page,
-    this.perPage,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (term != null) 'term': term,
-      if (notAssociatedToGroup != null)
-        'not_associated_to_group': notAssociatedToGroup,
-      if (groupConstrained != null) 'group_constrained': groupConstrained,
-      if (excludeDefaultChannels != null)
-        'exclude_default_channels': excludeDefaultChannels,
-      if (includeDeleted != null) 'include_deleted': includeDeleted,
-      if (excludePolicyConstrained != null)
-        'exclude_policy_constrained': excludePolicyConstrained,
-      if (publicChannels != null) 'public': publicChannels,
-      if (privateChannels != null) 'private': privateChannels,
-      if (page != null) 'page': page,
-      if (perPage != null) 'per_page': perPage,
     };
   }
 }

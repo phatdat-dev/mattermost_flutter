@@ -1,13 +1,31 @@
-/// Plugin manifest model
+/// Model for Plugin Manifest
 class MPluginManifest {
+  /// Globally unique identifier that represents the plugin.
   final String id;
+
+  /// Name of the plugin.
   final String name;
+
+  /// Description of what the plugin is and does.
   final String description;
+
+  /// Version number of the plugin.
   final String version;
-  final int? minServerVersion;
-  final Map<String, dynamic>? server;
-  final Map<String, dynamic>? webapp;
-  final Map<String, dynamic>? settings;
+
+  /// The minimum Mattermost server version required for the plugin.
+  final String? minServerVersion;
+
+  /// Deprecated in Mattermost 5.2 release.
+  final MPluginBackend? backend;
+
+  /// Server configuration for the plugin.
+  final MPluginServer? server;
+
+  /// Webapp configuration for the plugin.
+  final MPluginWebapp? webapp;
+
+  /// Settings schema used to define the System Console UI for the plugin.
+  final Map<String, dynamic>? settingsSchema;
 
   MPluginManifest({
     required this.id,
@@ -15,9 +33,10 @@ class MPluginManifest {
     required this.description,
     required this.version,
     this.minServerVersion,
+    this.backend,
     this.server,
     this.webapp,
-    this.settings,
+    this.settingsSchema,
   });
 
   factory MPluginManifest.fromJson(Map<String, dynamic> json) {
@@ -27,9 +46,10 @@ class MPluginManifest {
       description: json['description'] ?? '',
       version: json['version'] ?? '',
       minServerVersion: json['min_server_version'],
-      server: json['server'],
-      webapp: json['webapp'],
-      settings: json['settings'],
+      backend: json['backend'] != null ? MPluginBackend.fromJson(json['backend']) : null,
+      server: json['server'] != null ? MPluginServer.fromJson(json['server']) : null,
+      webapp: json['webapp'] != null ? MPluginWebapp.fromJson(json['webapp']) : null,
+      settingsSchema: json['settings_schema'],
     );
   }
 
@@ -39,10 +59,80 @@ class MPluginManifest {
       'name': name,
       'description': description,
       'version': version,
-      if (minServerVersion != null) 'min_server_version': minServerVersion,
-      if (server != null) 'server': server,
-      if (webapp != null) 'webapp': webapp,
-      if (settings != null) 'settings': settings,
+      'min_server_version': minServerVersion,
+      'backend': backend?.toJson(),
+      'server': server?.toJson(),
+      'webapp': webapp?.toJson(),
+      'settings_schema': settingsSchema,
+    };
+  }
+}
+
+/// Deprecated backend configuration (Mattermost 5.2).
+class MPluginBackend {
+  /// Path to the executable binary.
+  final String? executable;
+
+  MPluginBackend({this.executable});
+
+  factory MPluginBackend.fromJson(Map<String, dynamic> json) {
+    return MPluginBackend(
+      executable: json['executable'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'executable': executable,
+    };
+  }
+}
+
+/// Server configuration for the plugin.
+class MPluginServer {
+  /// Paths to executable binaries for different platforms.
+  final Map<String, String>? executables;
+
+  /// Path to the executable binary.
+  final String? executable;
+
+  MPluginServer({this.executables, this.executable});
+
+  factory MPluginServer.fromJson(Map<String, dynamic> json) {
+    Map<String, String>? executables;
+    if (json['executables'] != null && json['executables'] is Map) {
+      executables = (json['executables'] as Map<String, dynamic>).map((k, v) => MapEntry(k, v as String));
+    }
+    return MPluginServer(
+      executables: executables,
+      executable: json['executable'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'executables': executables,
+      'executable': executable,
+    };
+  }
+}
+
+/// Webapp configuration for the plugin.
+class MPluginWebapp {
+  /// Path to the webapp JavaScript bundle.
+  final String? bundlePath;
+
+  MPluginWebapp({this.bundlePath});
+
+  factory MPluginWebapp.fromJson(Map<String, dynamic> json) {
+    return MPluginWebapp(
+      bundlePath: json['bundle_path'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'bundle_path': bundlePath,
     };
   }
 }
@@ -56,12 +146,8 @@ class MPluginManifests {
 
   factory MPluginManifests.fromJson(Map<String, dynamic> json) {
     return MPluginManifests(
-      active: (json['active'] as List<dynamic>? ?? [])
-          .map((manifest) => MPluginManifest.fromJson(manifest))
-          .toList(),
-      inactive: (json['inactive'] as List<dynamic>? ?? [])
-          .map((manifest) => MPluginManifest.fromJson(manifest))
-          .toList(),
+      active: (json['active'] as List<dynamic>? ?? []).map((manifest) => MPluginManifest.fromJson(manifest)).toList(),
+      inactive: (json['inactive'] as List<dynamic>? ?? []).map((manifest) => MPluginManifest.fromJson(manifest)).toList(),
     );
   }
 

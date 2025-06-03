@@ -9,13 +9,25 @@ class MComplianceApi {
   MComplianceApi(this._dio);
 
   /// Create compliance report
-  Future<MComplianceReport> createComplianceReport(
-    MCreateComplianceReportRequest request,
-  ) async {
+  Future<MComplianceReport> createComplianceReport({
+    required String desc,
+    required String keywords,
+    required String emails,
+    required int startAt,
+    required int endAt,
+  }) async {
     try {
+      final data = {
+        'desc': desc,
+        'keywords': keywords,
+        'emails': emails,
+        'start_at': startAt,
+        'end_at': endAt,
+      };
+
       final response = await _dio.post(
         '/api/v4/compliance/reports',
-        data: request.toJson(),
+        data: data,
       );
       return MComplianceReport.fromJson(response.data);
     } catch (e) {

@@ -38,22 +38,3 @@ class MEmoji {
     };
   }
 }
-
-/// Emoji search request
-class MEmojiSearchRequest {
-  final String? term;
-  final String? prefixOnly;
-  final int? page;
-  final int? perPage;
-
-  MEmojiSearchRequest({this.term, this.prefixOnly, this.page, this.perPage});
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (term != null) 'term': term,
-      if (prefixOnly != null) 'prefix_only': prefixOnly,
-      if (page != null) 'page': page,
-      if (perPage != null) 'per_page': perPage,
-    };
-  }
-}

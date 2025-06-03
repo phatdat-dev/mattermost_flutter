@@ -172,24 +172,3 @@ class MRemoteClusterInvite {
     };
   }
 }
-
-/// Create remote cluster invite request
-class MCreateRemoteClusterInviteRequest {
-  final String name;
-  final String siteUrl;
-  final int? expiresIn;
-
-  MCreateRemoteClusterInviteRequest({
-    required this.name,
-    required this.siteUrl,
-    this.expiresIn,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'site_url': siteUrl,
-      if (expiresIn != null) 'expires_in': expiresIn,
-    };
-  }
-}
