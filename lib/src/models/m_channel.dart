@@ -117,7 +117,7 @@ class MChannelMember {
       lastViewedAt: json['last_viewed_at'],
       msgCount: json['msg_count'],
       mentionCount: json['mention_count'],
-      notifyProps: json['notify_props'],
+      notifyProps: json['notify_props'] != null ? MChannelNotifyProps.fromJson(json['notify_props']) : null,
       lastUpdateAt: json['last_update_at'],
       schemeUser: json['scheme_user'],
       schemeAdmin: json['scheme_admin'],
