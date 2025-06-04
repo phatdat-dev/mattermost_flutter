@@ -174,9 +174,10 @@ class ErrorScreen extends StatelessWidget {
         iconData = Icons.block;
         break;
       case ErrorType.general:
-      default:
-        iconData = Icons.error_outline;
-        break;
+        iconData = Icons.error;
+      // default:
+      //   iconData = Icons.error_outline;
+      //   break;
     }
 
     return Container(
@@ -254,8 +255,10 @@ class ErrorScreen extends StatelessWidget {
       case ErrorType.permission:
         return Colors.purple;
       case ErrorType.general:
-      default:
         return Theme.of(context).colorScheme.error;
+
+      // default:
+      //   return Theme.of(context).colorScheme.error;
     }
   }
 }
@@ -375,8 +378,9 @@ class ErrorDialog extends StatelessWidget {
       case ErrorType.permission:
         return Icons.block;
       case ErrorType.general:
-      default:
         return Icons.error_outline;
+      // default:
+      //   return Icons.error_outline;
     }
   }
 
@@ -393,8 +397,9 @@ class ErrorDialog extends StatelessWidget {
       case ErrorType.permission:
         return Colors.purple;
       case ErrorType.general:
-      default:
         return Theme.of(context).colorScheme.error;
+      // default:
+      //   return Theme.of(context).colorScheme.error;
     }
   }
 }
@@ -508,8 +513,9 @@ class ErrorWidget extends StatelessWidget {
       case ErrorType.permission:
         return Icons.block;
       case ErrorType.general:
-      default:
         return Icons.error_outline;
+      // default:
+      //   return Icons.error_outline;
     }
   }
 
@@ -526,8 +532,9 @@ class ErrorWidget extends StatelessWidget {
       case ErrorType.permission:
         return Colors.purple;
       case ErrorType.general:
-      default:
         return Theme.of(context).colorScheme.error;
+      // default:
+      //   return Theme.of(context).colorScheme.error;
     }
   }
 }

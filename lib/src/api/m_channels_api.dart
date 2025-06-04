@@ -189,14 +189,39 @@ class MChannelsApi {
     }
   }
 
-  /// Get channels for a user
+  /// Get channels for a user on a team
+  ///
+  /// Get all the channels on a team for a user.
+  ///
+  /// **Required Permissions:**
+  /// - Logged in as the user, or have `edit_other_users` permission,
+  ///   and `view_team` permission for the team.
+  ///
+  /// **Parameters:**
+  /// - [userId] - User GUID
+  /// - [teamId] - Team GUID
+  /// - [includeDeleted] - Defines if deleted channels should be returned or not (default: false)
+  /// - [lastDeleteAt] - Filters the deleted channels by this time in epoch format.
+  ///   Does not have any effect if includeDeleted is set to false (default: 0)
+  ///
+  /// **Returns:**
+  /// List of [MChannel] objects representing the channels
+  ///
+  /// **API Endpoint:** `GET /api/v4/users/{user_id}/teams/{team_id}/channels`
   Future<List<MChannel>> getChannelsForUser(
     String userId,
-    String teamId,
-  ) async {
+    String teamId, {
+    bool includeDeleted = false,
+    int lastDeleteAt = 0,
+  }) async {
     try {
+      final queryParameters = <String, dynamic>{};
+      if (includeDeleted) queryParameters['include_deleted'] = includeDeleted.toString();
+      if (lastDeleteAt > 0) queryParameters['last_delete_at'] = lastDeleteAt.toString();
+
       final response = await _dio.get(
         '/api/v4/users/$userId/teams/$teamId/channels',
+        queryParameters: queryParameters.isNotEmpty ? queryParameters : null,
       );
       return (response.data as List).map((channelData) => MChannel.fromJson(channelData)).toList();
     } catch (e) {
@@ -292,6 +317,34 @@ class MChannelsApi {
     try {
       final response = await _dio.post('/api/v4/channels/group', data: userIds);
       return MChannel.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get unread messages and mentions for a channel for a user
+  ///
+  /// Returns the total unread messages and mentions for a channel for a user.
+  ///
+  /// **Required Permissions:**
+  /// - Must be logged in as user and have the `read_channel` permission,
+  ///   or have `edit_other_users` permission.
+  ///
+  /// **Parameters:**
+  /// - [userId] - User GUID
+  /// - [channelId] - Channel GUID
+  ///
+  /// **Returns:**
+  /// [MChannelUnread] containing unread message and mention counts
+  ///
+  /// **API Endpoint:** `GET /api/v4/users/{user_id}/channels/{channel_id}/unread`
+  Future<MChannelUnread> getChannelUnread(
+    String userId,
+    String channelId,
+  ) async {
+    try {
+      final response = await _dio.get('/api/v4/users/$userId/channels/$channelId/unread');
+      return MChannelUnread.fromJson(response.data);
     } catch (e) {
       rethrow;
     }

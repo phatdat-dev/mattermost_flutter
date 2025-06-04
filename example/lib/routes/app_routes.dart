@@ -21,7 +21,6 @@ import '../screens/direct_messages/direct_messages_screen.dart';
 import '../screens/direct_messages/group_chat_screen.dart';
 import '../screens/main/channel_screen.dart';
 import '../screens/main/dashboard_screen.dart';
-import '../screens/main/home_screen.dart';
 import '../screens/main/thread_screen.dart';
 import '../screens/messages/edit_post_screen.dart';
 import '../screens/messages/global_threads_screen.dart';
@@ -68,11 +67,9 @@ class AppRoutes {
 
       // Main routes
       case Screens.home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const DashboardScreen());
       case Screens.dashboard:
-        return MaterialPageRoute(
-          builder: (_) => const DashboardScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const DashboardScreen());
       case Screens.channel:
         return MaterialPageRoute(
           builder: (_) => ChannelScreen(channel: settings.arguments as MChannel),

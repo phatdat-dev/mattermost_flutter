@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main/home_screen.dart';
+import '../main/dashboard_screen.dart';
 
 class MFAScreen extends StatefulWidget {
   const MFAScreen({super.key});
@@ -45,9 +45,7 @@ class _MFAScreenState extends State<MFAScreen> {
 
       // Navigate to home screen after successful MFA
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } catch (e) {
       setState(() {

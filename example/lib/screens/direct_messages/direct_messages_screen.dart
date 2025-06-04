@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 import '../../routes/app_routes.dart';
-import '../main/channels_screen.dart';
 import 'group_chat_screen.dart';
 
 class DirectMessagesScreen extends StatefulWidget {
@@ -478,19 +478,45 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
     }
   }
 
-  Future<void> _sendMessage() async {
-    final message = _messageController.text.trim();
-    if (message.isEmpty) return;
-
-    _messageController.clear();
+  Future<void> _sendMessage(String message, List<File>? attachments) async {
+    if (message.trim().isEmpty && (attachments == null || attachments.isEmpty)) return;
 
     try {
-      await AppRoutes.client.posts.createPost(channelId: widget.channel.id, message: message);
+      List<String>? fileIds;
+
+      // Upload files first if there are attachments
+      if (attachments != null && attachments.isNotEmpty) {
+        fileIds = [];
+        for (final file in attachments) {
+          try {
+            final uploadResponse = await AppRoutes.client.files.uploadFile(
+              channelId: widget.channel.id,
+              file: file,
+            );
+            if (uploadResponse.fileInfos.isNotEmpty) {
+              fileIds.add(uploadResponse.fileInfos.first.id);
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload file: ${file.path.split('/').last}')),
+            );
+          }
+        }
+      }
+
+      // Create post
+      await AppRoutes.client.posts.createPost(
+        channelId: widget.channel.id,
+        message: message.trim(),
+        fileIds: fileIds,
+      );
 
       // Reload posts after sending a message
       _loadPosts();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to send message: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send message: $e')),
+      );
     }
   }
 
@@ -597,31 +623,10 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                       },
                     ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.attach_file),
-                    onPressed: () {
-                      // File attachment functionality
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Type a message...',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24.0))),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      ),
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                  IconButton(icon: const Icon(Icons.send), onPressed: _sendMessage),
-                ],
-              ),
+            MessageComposer(
+              onSendMessage: _sendMessage,
+              channelId: widget.channel.id,
+              placeholder: 'Message ${widget.otherUser.username}',
             ),
           ],
         ),
@@ -666,7 +671,11 @@ class DirectMessageTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(post.message, style: const TextStyle(fontSize: 16)),
+                  if (post.message.isNotEmpty) Text(post.message, style: const TextStyle(fontSize: 16)),
+
+                  // File attachments
+                  if (post.fileIds != null && post.fileIds!.isNotEmpty) _buildFileAttachments(context, post.fileIds!),
+
                   const SizedBox(height: 4),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -694,6 +703,114 @@ class DirectMessageTile extends StatelessWidget {
     );
   }
 
+  Widget _buildFileAttachments(BuildContext context, List<String> fileIds) {
+    return FutureBuilder<List<MFileInfo>>(
+      future: _loadFileInfos(fileIds),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.0),
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+
+        final files = snapshot.data!;
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            children: files.map((file) => _buildFileAttachment(context, file)).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFileAttachment(BuildContext context, MFileInfo file) {
+    final isImage = file.mimeType.startsWith('image/');
+
+    if (isImage) {
+      return Container(
+        width: 150,
+        height: 150,
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            '${AppRoutes.client.config.baseUrl}/api/v4/files/${file.id}',
+            headers: {
+              'Authorization': 'Bearer ${AppRoutes.client.config.token}',
+            },
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey.shade200,
+                child: const Icon(Icons.broken_image),
+              );
+            },
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(_getFileIcon(file.extension), color: Colors.blue, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              file.name,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Future<List<MFileInfo>> _loadFileInfos(List<String> fileIds) async {
+    try {
+      final List<MFileInfo> files = [];
+      for (final fileId in fileIds) {
+        final fileInfo = await AppRoutes.client.files.getFileInfo(fileId);
+        files.add(fileInfo);
+      }
+      return files;
+    } catch (e) {
+      debugPrint('Error loading file infos: $e');
+      return [];
+    }
+  }
+
+  IconData _getFileIcon(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
   String _formatTimestamp(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final now = DateTime.now();
@@ -708,5 +825,166 @@ class DirectMessageTile extends StatelessWidget {
     } else {
       return 'Just now';
     }
+  }
+}
+
+class MessageComposer extends StatefulWidget {
+  final Function(String, List<File>?) onSendMessage;
+  final String channelId;
+  final String placeholder;
+
+  const MessageComposer({
+    super.key,
+    required this.onSendMessage,
+    required this.channelId,
+    required this.placeholder,
+  });
+
+  @override
+  State<MessageComposer> createState() => _MessageComposerState();
+}
+
+class _MessageComposerState extends State<MessageComposer> {
+  final _messageController = TextEditingController();
+  List<File> _selectedFiles = [];
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickFiles() async {
+    // Implement file picking logic here using a package like file_picker
+    // For simplicity, let's assume you have a method that returns a list of files
+    // Example:
+    // final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    // if (result != null) {
+    //   setState(() {
+    //     _selectedFiles = result.paths.map((path) => File(path!)).toList();
+    //   });
+    // }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          if (_selectedFiles.isNotEmpty)
+            SizedBox(
+              height: 60,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _selectedFiles.length,
+                itemBuilder: (context, index) {
+                  final file = _selectedFiles[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey.shade200,
+                          ),
+                          child: Center(child: Text(file.path.split('/').last)), // Display file name for simplicity
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedFiles.removeAt(index);
+                              });
+                            },
+                            child: const Icon(Icons.cancel, color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.attach_file),
+                onPressed: _pickFiles,
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24.0))),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  ),
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) {
+                    widget.onSendMessage(_messageController.text, _selectedFiles);
+                    _messageController.clear();
+                    setState(() {
+                      _selectedFiles = [];
+                    });
+                  },
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  widget.onSendMessage(_messageController.text, _selectedFiles);
+                  _messageController.clear();
+                  setState(() {
+                    _selectedFiles = [];
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReactionPicker extends StatelessWidget {
+  final Function(String) onEmojiSelected;
+
+  const ReactionPicker({super.key, required this.onEmojiSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 6,
+      padding: const EdgeInsets.all(8),
+      children:
+          [
+                '👍',
+                '👎',
+                '😄',
+                '🎉',
+                '😕',
+                '❤️',
+                '🚀',
+                '👀',
+                '🔥',
+                '🤔',
+                '👏',
+                '🙏',
+              ]
+              .map(
+                (emoji) => GestureDetector(
+                  onTap: () => onEmojiSelected(emoji),
+                  child: Center(child: Text(emoji, style: const TextStyle(fontSize: 24))),
+                ),
+              )
+              .toList(),
+    );
   }
 }

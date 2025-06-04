@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 import '../../routes/app_routes.dart';
-import '../main/home_screen.dart';
+import '../main/dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,9 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // Pre-fill with example values for testing
-    _serverController.text = 'https://your-mattermost-server.com';
-    _usernameController.text = '';
-    _passwordController.text = '';
+    _serverController.text = 'http://103.98.152.122:8065';
+    _usernameController.text = 'admin';
+    _passwordController.text = 'Password1!';
     _tokenController.text = '';
   }
 
@@ -70,9 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Navigate to the home screen on successful login
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } catch (e) {
       setState(() {

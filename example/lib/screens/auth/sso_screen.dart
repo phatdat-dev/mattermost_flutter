@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main/home_screen.dart';
+import '../main/dashboard_screen.dart';
 
 class SSOScreen extends StatefulWidget {
   const SSOScreen({super.key});
@@ -28,9 +28,7 @@ class _SSOScreenState extends State<SSOScreen> {
       if (!mounted) return;
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } catch (e) {
       setState(() {

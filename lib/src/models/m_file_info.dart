@@ -76,9 +76,7 @@ class MFileUploadResponse {
 
   factory MFileUploadResponse.fromJson(Map<String, dynamic> json) {
     return MFileUploadResponse(
-      fileInfos: (json['file_infos'] as List<dynamic>? ?? [])
-          .map((fileInfo) => MFileInfo.fromJson(fileInfo))
-          .toList(),
+      fileInfos: (json['file_infos'] as List<dynamic>? ?? []).map((fileInfo) => MFileInfo.fromJson(fileInfo)).toList(),
       clientIds: (json['client_ids'] as Map<String, dynamic>? ?? {}).map(
         (key, value) => MapEntry(key, value.toString()),
       ),
@@ -89,6 +87,35 @@ class MFileUploadResponse {
     return {
       'file_infos': fileInfos.map((fileInfo) => fileInfo.toJson()).toList(),
       'client_ids': clientIds,
+    };
+  }
+}
+
+/// File search response
+class MFileSearchResponse {
+  final List<MFileInfo> fileInfos;
+  final int totalCount;
+  final bool hasNext;
+
+  MFileSearchResponse({
+    required this.fileInfos,
+    required this.totalCount,
+    required this.hasNext,
+  });
+
+  factory MFileSearchResponse.fromJson(Map<String, dynamic> json) {
+    return MFileSearchResponse(
+      fileInfos: (json['file_infos'] as List<dynamic>? ?? []).map((fileInfo) => MFileInfo.fromJson(fileInfo)).toList(),
+      totalCount: json['total_count'] ?? 0,
+      hasNext: json['has_next'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'file_infos': fileInfos.map((fileInfo) => fileInfo.toJson()).toList(),
+      'total_count': totalCount,
+      'has_next': hasNext,
     };
   }
 }

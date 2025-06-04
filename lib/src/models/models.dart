@@ -1,6 +1,7 @@
 export 'm_audit.dart';
 export 'm_bot.dart';
 export 'm_channel.dart';
+export 'm_channel_unread.dart';
 export 'm_cloud.dart';
 export 'm_cluster.dart';
 export 'm_command.dart';

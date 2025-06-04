@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 import '../../routes/app_routes.dart';
+import '../../widgets/message_composer.dart';
 
 class ThreadScreen extends StatefulWidget {
   final MPost post;
@@ -48,7 +51,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
       debugPrint('Loaded ${replies.posts.length} replies for thread ${widget.post.id}');
 
       setState(() {
-        // _replies = replies;
+        _replies.clear();
+        _replies.addAll(replies.posts.values);
         _isLoading = false;
       });
     } catch (e) {
@@ -73,18 +77,42 @@ class _ThreadScreenState extends State<ThreadScreen> {
     // };
   }
 
-  Future<void> _sendReply() async {
-    final message = _replyController.text.trim();
-    if (message.isEmpty) return;
+  Future<void> _sendReply(String message, List<File>? attachments) async {
+    if (message.trim().isEmpty && (attachments == null || attachments.isEmpty)) return;
 
     try {
-      _replyController.clear();
+      List<String>? fileIds;
 
+      // Upload files first if there are attachments
+      if (attachments != null && attachments.isNotEmpty) {
+        fileIds = [];
+        for (final file in attachments) {
+          try {
+            final uploadResponse = await AppRoutes.client.files.uploadFile(
+              channelId: widget.post.channelId,
+              file: file,
+            );
+            if (uploadResponse.fileInfos.isNotEmpty) {
+              fileIds.add(uploadResponse.fileInfos.first.id);
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to upload file: ${file.path.split('/').last}')),
+            );
+          }
+        }
+      }
+
+      // Create reply post
       await AppRoutes.client.posts.createPost(
         channelId: widget.post.channelId,
-        message: message,
+        message: message.trim(),
         rootId: widget.post.id,
+        fileIds: fileIds,
       );
+
+      // Reload thread to show new reply
+      _loadThread();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send reply: ${e.toString()}')),
@@ -278,56 +306,128 @@ class _ThreadScreenState extends State<ThreadScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(reply.message),
+          if (reply.message.isNotEmpty) Text(reply.message),
+
+          // File attachments for replies
+          if (reply.fileIds != null && reply.fileIds!.isNotEmpty) _buildFileAttachments(reply.fileIds!),
         ],
       ),
     );
   }
 
+  Widget _buildFileAttachments(List<String> fileIds) {
+    return FutureBuilder<List<MFileInfo>>(
+      future: _loadFileInfos(fileIds),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+
+        final files = snapshot.data!;
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: files.map((file) => _buildFileAttachment(file)).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<List<MFileInfo>> _loadFileInfos(List<String> fileIds) async {
+    try {
+      final List<MFileInfo> files = [];
+      for (final fileId in fileIds) {
+        final fileInfo = await AppRoutes.client.files.getFileInfo(fileId);
+        files.add(fileInfo);
+      }
+      return files;
+    } catch (e) {
+      debugPrint('Error loading file infos: $e');
+      return [];
+    }
+  }
+
+  Widget _buildFileAttachment(MFileInfo file) {
+    final isImage = file.mimeType.startsWith('image/');
+
+    if (isImage) {
+      return Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            '${AppRoutes.client.config.baseUrl}/api/v4/files/${file.id}',
+            headers: {
+              'Authorization': 'Bearer ${AppRoutes.client.config.token}',
+            },
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey.shade200,
+                child: const Icon(Icons.broken_image),
+              );
+            },
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(_getFileIcon(file.extension), color: Colors.blue, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              file.name,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  IconData _getFileIcon(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'xls':
+      case 'xlsx':
+        return Icons.table_chart;
+      default:
+        return Icons.insert_drive_file;
+    }
+  }
+
   Widget _buildReplyInput() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, -1),
-            blurRadius: 4,
-            color: Colors.black.withValues(alpha: 0.1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _replyController,
-              focusNode: _replyFocusNode,
-              decoration: InputDecoration(
-                hintText: 'Reply to thread...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              maxLines: null,
-              onSubmitted: (_) => _sendReply(),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: _sendReply,
-            icon: const Icon(Icons.send),
-            style: IconButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
-      ),
+    return MessageComposer(
+      onSendMessage: _sendReply,
+      channelId: widget.post.channelId,
+      placeholder: 'Reply to thread...',
     );
   }
 
