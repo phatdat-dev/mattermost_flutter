@@ -26,9 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // Pre-fill with example values for testing
-    _serverController.text = 'http://103.98.152.122:8065';
-    _usernameController.text = 'admin';
-    _passwordController.text = 'Password1!';
+    _serverController.text = 'https://your-mattermost-server.com';
+    _usernameController.text = '';
+    _passwordController.text = '';
     _tokenController.text = '';
   }
 

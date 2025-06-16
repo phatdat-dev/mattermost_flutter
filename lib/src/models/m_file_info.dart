@@ -70,16 +70,14 @@ class MFileInfo {
 /// File upload response
 class MFileUploadResponse {
   final List<MFileInfo> fileInfos;
-  final Map<String, String> clientIds;
+  final List<String> clientIds;
 
   MFileUploadResponse({required this.fileInfos, required this.clientIds});
 
   factory MFileUploadResponse.fromJson(Map<String, dynamic> json) {
     return MFileUploadResponse(
       fileInfos: (json['file_infos'] as List<dynamic>? ?? []).map((fileInfo) => MFileInfo.fromJson(fileInfo)).toList(),
-      clientIds: (json['client_ids'] as Map<String, dynamic>? ?? {}).map(
-        (key, value) => MapEntry(key, value.toString()),
-      ),
+      clientIds: List<String>.from(json['client_ids'] ?? []),
     );
   }
 

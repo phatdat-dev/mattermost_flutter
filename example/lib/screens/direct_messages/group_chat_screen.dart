@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 import '../../routes/app_routes.dart';
-import 'direct_messages_screen.dart';
+import '../../widgets/message_composer.dart';
 
 class GroupChatScreen extends StatefulWidget {
   final MattermostClient client;

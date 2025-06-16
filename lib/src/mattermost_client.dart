@@ -54,6 +54,7 @@ class MattermostClient {
     _dio.options.headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'User-Agent': 'Mobile', // {"Mobile", "Android", "iOS", "iPhone", "iPad"}
     };
 
     // Add logging interceptor in debug mode

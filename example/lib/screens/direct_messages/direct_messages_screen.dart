@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mattermost_flutter/mattermost_flutter.dart';
 
 import '../../routes/app_routes.dart';
+import '../../widgets/message_composer.dart';
 import 'group_chat_screen.dart';
 
 class DirectMessagesScreen extends StatefulWidget {
@@ -825,131 +826,6 @@ class DirectMessageTile extends StatelessWidget {
     } else {
       return 'Just now';
     }
-  }
-}
-
-class MessageComposer extends StatefulWidget {
-  final Function(String, List<File>?) onSendMessage;
-  final String channelId;
-  final String placeholder;
-
-  const MessageComposer({
-    super.key,
-    required this.onSendMessage,
-    required this.channelId,
-    required this.placeholder,
-  });
-
-  @override
-  State<MessageComposer> createState() => _MessageComposerState();
-}
-
-class _MessageComposerState extends State<MessageComposer> {
-  final _messageController = TextEditingController();
-  List<File> _selectedFiles = [];
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickFiles() async {
-    // Implement file picking logic here using a package like file_picker
-    // For simplicity, let's assume you have a method that returns a list of files
-    // Example:
-    // final result = await FilePicker.platform.pickFiles(allowMultiple: true);
-    // if (result != null) {
-    //   setState(() {
-    //     _selectedFiles = result.paths.map((path) => File(path!)).toList();
-    //   });
-    // }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          if (_selectedFiles.isNotEmpty)
-            SizedBox(
-              height: 60,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _selectedFiles.length,
-                itemBuilder: (context, index) {
-                  final file = _selectedFiles[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey.shade200,
-                          ),
-                          child: Center(child: Text(file.path.split('/').last)), // Display file name for simplicity
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedFiles.removeAt(index);
-                              });
-                            },
-                            child: const Icon(Icons.cancel, color: Colors.red),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.attach_file),
-                onPressed: _pickFiles,
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: widget.placeholder,
-                    border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(24.0))),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  ),
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) {
-                    widget.onSendMessage(_messageController.text, _selectedFiles);
-                    _messageController.clear();
-                    setState(() {
-                      _selectedFiles = [];
-                    });
-                  },
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  widget.onSendMessage(_messageController.text, _selectedFiles);
-                  _messageController.clear();
-                  setState(() {
-                    _selectedFiles = [];
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 
