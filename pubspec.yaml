@@ -4,13 +4,13 @@ version: 1.0.9
 homepage: https://github.com/phatdat-dev/mattermost_flutter
 
 environment:
-  sdk: "3.8.1"
-  flutter: "3.32.5"
+  sdk: "3.9.0"
+  flutter: "3.35.1"
 
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^5.8.0+1
+  dio: ^5.9.0
   web_socket_channel: ^3.0.3
 
 dev_dependencies:
