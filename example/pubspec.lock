@@ -501,5 +501,5 @@ packages:
     source: hosted
     version: "6.6.1"
 sdks:
-  dart: "3.9.0"
-  flutter: "3.35.1"
+  dart: "3.9.2"
+  flutter: "3.35.7"
