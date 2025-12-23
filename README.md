@@ -22,21 +22,6 @@ Built with Flutter best practices and designed for performance, this package is 
 - 🔍 **Search**: Comprehensive search capabilities
 - 🛠️ **Admin Functions**: Administrative operations support
 
-## Installation
-
-Add this to your package's `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  mattermost_flutter: ^1.0.0
-```
-
-Then run:
-
-```shellscript
-flutter pub get
-```
-
 ## Basic Usage
 
 ### Initialize the Client
